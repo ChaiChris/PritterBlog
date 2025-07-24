@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+    id          Int         @id @default(autoincrement())
+    email       String      @unique  // 唯一值驗證
+    password    String
+    username    String      @unique @db.VarChar(50)
+    role        Role        @default(USER)
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    posts       Post[]
+    comments    Comment[]
+}
+
+model Post {
+    id          Int             @id @default(autoincrement())
+    user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      Int
+    title       String          @db.VarChar(200)
+    body        String
+    status      ArticleStatus   @default(PUBLISHED)
+    comments    Comment[]
+    createdAt   DateTime        @default(now())
+    updatedAt   DateTime        @updatedAt
+    categoryId  Int
+    category    Category        @relation(fields: [categoryId], references: [id])
+
+    @@index([userId])
+    @@index([createdAt])
+    @@index([status, createdAt])
+    @@index([status])
+    @@index([updatedAt])
+}
+
+model Category {
+    id    Int    @id @default(autoincrement())
+    name  String @unique
+    posts Post[] // 一個分類對多篇文章
+}
+
+model Comment {
+    id          Int             @id @default(autoincrement())
+    user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      Int
+    post        Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+    postId      Int
+    body        String
+    status      ArticleStatus   @default(PUBLISHED)
+    createdAt   DateTime        @default(now())
+    updatedAt    DateTime       @updatedAt
+
+    @@index([userId])
+    @@index([postId])
+    @@index([createdAt])
+    @@index([updatedAt])
+    @@index([status, createdAt])
+    @@index([status])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ArticleStatus {
+  PUBLISHED
+  UNPUBLISHED
+  DELETED
+}

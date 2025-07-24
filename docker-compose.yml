@@ -1,0 +1,38 @@
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+    restart: always
+    
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3001:3001"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000/api
+    depends_on:
+      - server
+    restart: always
+
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: forumdb
+      POSTGRES_USER: chris
+      POSTGRES_PASSWORD: 123456Qsxesz
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
