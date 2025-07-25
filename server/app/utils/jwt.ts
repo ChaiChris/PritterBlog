@@ -3,7 +3,7 @@ import { JwtPayload } from "../types/jwt.type";
 
 const SECRET_KEY = process.env.JWT_SECRET;
 if (!SECRET_KEY) {
-  throw new Error("JWT_SECRET is not defined in environment variables");
+  throw new Error("ENV 缺少 JWT_SECRET ");
 }
 
 export const signToken = (payload: JwtPayload) => {
