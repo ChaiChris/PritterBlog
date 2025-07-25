@@ -8,13 +8,14 @@ import {
 import { logger } from "../logger.js";
 
 export const getPostsController = async (req: Request, res: Response) => {
-  const { limit, skip, author, title, status } = req.query;
+  const { limit, skip, categoryId, author, title, status } = req.query;
   const isValidStatus = (val: any): val is ArticleStatusFilter =>
     ["ALL", "PUBLISHED", "UNPUBLISHED", "DELETED"].includes(val);
 
   const query: GetPostTypes = {
     limit: Number(limit) || 10,
     skip: Number(skip) || 0,
+    categoryId: categoryId ? Number(categoryId) : undefined,
     author: author ? (author as string) : undefined,
     title: title ? (title as string) : undefined,
     status: isValidStatus(status) ? status : undefined,

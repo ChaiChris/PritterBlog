@@ -1,6 +1,7 @@
 export interface GetPostTypes {
   skip?: number;
   limit?: number;
+  categoryId?: number;
   author?: string;
   title?: string;
   category?: string;

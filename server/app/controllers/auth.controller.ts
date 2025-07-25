@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { checkUserService, registerService } from "../services/auth.service";
+import * as authService from "../services/auth.service";
 import * as bcrypt from "bcrypt";
 import { signToken } from "../utils/jwt";
 import { client } from "../prisma/client";
@@ -32,7 +32,7 @@ const UserRegisterSchema = z.object({
 export const register = async (req: Request, res: Response) => {
   try {
     const input: RegisterInput = UserRegisterSchema.parse(req.body);
-    const result = await registerService(input);
+    const result = await authService.registerService(input);
     return res.status(201).json(result);
   } catch (e: any) {
     return res.status(400).json({ message: e.message });
@@ -42,7 +42,7 @@ export const register = async (req: Request, res: Response) => {
 export const checkUserName = async (req: Request, res: Response) => {
   const userNameInput: CheckUserName = req.body;
   try {
-    const result = await checkUserService(userNameInput);
+    const result = await authService.checkUserService(userNameInput);
     return res.status(201).json(result);
   } catch (e: any) {
     return res.status(400).json({ message: e.message });

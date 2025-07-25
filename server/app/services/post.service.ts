@@ -8,12 +8,18 @@ import {
 export const getPosts = async ({
   skip,
   limit,
+  categoryId,
   author,
   title,
   status = ArticleStatusFilter.PUBLISHED,
 }: GetPostTypes) => {
   // 定義篩選值保存變數
   const where: any = {};
+
+  // 主題篩選
+  if (categoryId !== undefined) {
+    where.categoryId = categoryId;
+  }
 
   // 作者篩選
   if (author) {
@@ -44,6 +50,7 @@ export const getPosts = async ({
     where,
     include: {
       user: true,
+      category: true,
     },
     orderBy: { createdAt: "desc" },
     skip: skip ?? 0,
