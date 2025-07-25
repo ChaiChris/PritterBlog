@@ -20,7 +20,15 @@ export const login = async (req: Request, res: Response) => {
   }
 
   const token = signToken({ id: user.id });
-  return res.status(200).json({ token });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  });
+  res.status(200).json({ message: "登入成功" });
 };
 
 const UserRegisterSchema = z.object({
