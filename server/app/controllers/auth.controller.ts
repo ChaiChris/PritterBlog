@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
+import { checkUserService, registerService } from "../services/auth.service";
 import * as bcrypt from "bcrypt";
 import { signToken } from "../utils/jwt";
 import { client } from "../prisma/client";
+import { z } from "zod";
+import { CheckUserName, RegisterInput } from "../types/auth.type";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -20,31 +23,28 @@ export const login = async (req: Request, res: Response) => {
   return res.status(200).json({ token });
 };
 
+const UserRegisterSchema = z.object({
+  email: z.email(),
+  password: z.string().min(6),
+  username: z.string().min(3).max(50),
+});
+
 export const register = async (req: Request, res: Response) => {
-  const { email, password, username } = req.body;
-  const checkUser = await client.user.findUnique({ where: { email } });
-  if (checkUser) {
-    return res.status(401).json({ message: "該使用者已註冊" });
+  try {
+    const input: RegisterInput = UserRegisterSchema.parse(req.body);
+    const result = await registerService(input);
+    return res.status(201).json(result);
+  } catch (e: any) {
+    return res.status(400).json({ message: e.message });
   }
-  const hashedPassword = await bcrypt.hash(password, 12);
-
-  const newUser = await client.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-      username: username,
-    },
-  });
-
-  const token = signToken({ id: newUser.id });
-  return res.status(201).json({ token });
 };
 
 export const checkUserName = async (req: Request, res: Response) => {
-  const { username } = req.body;
-  const user = await client.user.findUnique({ where: { username } });
-  if (user) {
-    return res.status(200).json({ hasNameUsed: true });
+  const userNameInput: CheckUserName = req.body;
+  try {
+    const result = await checkUserService(userNameInput);
+    return res.status(201).json(result);
+  } catch (e: any) {
+    return res.status(400).json({ message: e.message });
   }
-  return res.status(200).json({ hasNameUsed: false });
 };

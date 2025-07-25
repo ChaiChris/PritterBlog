@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import * as postService from "../models/post.model.js";
+import * as postService from "../services/post.service.js";
 import {
   GetPostTypes,
   GetSinglePostTypes,
   ArticleStatusFilter,
 } from "../types/post.type.js";
 import { logger } from "../logger.js";
-import { getSinglePost } from "../models/post.model.js";
 
 export const getPostsController = async (req: Request, res: Response) => {
   const { limit, skip, author, title, status } = req.query;
@@ -38,9 +37,9 @@ export const getSinglePostController = async (req: Request, res: Response) => {
   };
 
   try {
-    const posts = await postService.getSinglePost(query);
+    const post = await postService.getSinglePost(query);
     logger.info("getSinglePostController: GetSinglePost Successfully");
-    res.status(200).json(posts);
+    res.status(200).json(post);
   } catch (err: any) {
     logger.error(`getSinglePostController: ERROR ${err.message}`);
     res.status(400).json({ error: "post fetch error" });
