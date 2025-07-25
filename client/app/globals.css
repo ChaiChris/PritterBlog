@@ -1,5 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Oswald:wght@200..700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
+
+@import '../styles/_variables.scss';
+@import '../styles/_keyframe-animations.scss';
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -110,6 +115,13 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans;
 }
 
 @layer base {

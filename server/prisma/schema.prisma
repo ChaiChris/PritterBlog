@@ -29,17 +29,18 @@ model User {
 }
 
 model Post {
-    id          Int             @id @default(autoincrement())
-    user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId      Int
-    title       String          @db.VarChar(200)
-    body        String
-    status      ArticleStatus   @default(PUBLISHED)
-    comments    Comment[]
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
-    categoryId  Int
-    category    Category        @relation(fields: [categoryId], references: [id])
+    id              Int             @id @default(autoincrement())
+    user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId          Int
+    title           String          @db.VarChar(200)
+    coverImagePath  String?         @db.VarChar(500)  // 封面圖片
+    body            String
+    status          ArticleStatus   @default(PUBLISHED)
+    comments        Comment[]
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @updatedAt
+    categoryId      Int
+    category        Category        @relation(fields: [categoryId], references: [id])
 
     @@index([userId])
     @@index([createdAt])
@@ -82,4 +83,9 @@ enum ArticleStatus {
   PUBLISHED
   UNPUBLISHED
   DELETED
+}
+
+enum ImageType {
+    COVER
+    CONTENT
 }
