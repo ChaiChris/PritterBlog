@@ -33,6 +33,7 @@
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.525.0",
     "multer": "^2.0.2",
     "next": "15.4.3",
@@ -40,11 +41,13 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hotkeys-hook": "^5.1.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

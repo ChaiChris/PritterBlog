@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 export function SignupPanel() {
   const router = useRouter();
   return (
-    <Card className="w-full max-w-sm shadow-2xl bg-zinc-200/60 backdrop-blur-xl">
+    <Card className="w-full max-w-sm shadow-2xl bg-zinc-200/70 backdrop-blur-md">
       <CardHeader>
         <CardTitle className={"text-zinc-700 text-xl"}>Pritter Blog</CardTitle>
         <CardDescription className={"text-zinc-700"}>
@@ -40,30 +40,53 @@ export function SignupPanel() {
               <div className="flex items-center text-zinc-800">
                 <Label htmlFor="name">名稱</Label>
               </div>
-              <Input id="name" type="text" required />
+              <Input
+                className="bg-zinc-100/30 focus:bg-zinc-100/80"
+                id="name"
+                type="text"
+                required
+              />
             </div>
             <div className="grid gap-2 text-zinc-800">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" required />
+              <Input
+                className="bg-zinc-100/30 focus:bg-zinc-100/80"
+                id="email"
+                type="email"
+                required
+              />
             </div>
             <div className="grid gap-2">
               <div className="flex items-center text-zinc-800">
                 <Label htmlFor="password">密碼</Label>
               </div>
-              <Input id="password" type="password" required />
+              <Input
+                className="bg-zinc-100/30 focus:bg-zinc-100/80"
+                id="password"
+                type="password"
+                required
+              />
             </div>
             <div className="grid gap-2">
               <div className="flex items-center text-zinc-800">
                 <Label htmlFor="comfirm_password">確認密碼</Label>
               </div>
-              <Input id="comfirm_password" type="password" required />
+              <Input
+                className="bg-zinc-100/30 focus:bg-zinc-100/80"
+                id="comfirm_password"
+                type="password"
+                required
+              />
             </div>
           </div>
         </form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button type="submit" className="cursor-pointer w-full bg-zinc-800/80">
-          登入
+        <Button
+          type="submit"
+          className="cursor-pointer w-full bg-zinc-800/60 shadow-lg"
+        >
+          註冊
         </Button>
       </CardFooter>
     </Card>
