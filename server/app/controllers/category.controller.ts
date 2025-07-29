@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { GetCategoryPostTypes } from "../types/category.type";
-import { logger } from "../logger";
-import * as categoryService from "../services/category.service";
+import { GetCategoryPostTypes } from "../types/category.type.js";
+import { logger } from "../logger.js";
+import * as categoryService from "../services/category.service.js";
 
 export const getCategoriesController = async (req: Request, res: Response) => {
   try {

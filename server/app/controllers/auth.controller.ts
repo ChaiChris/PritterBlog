@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import * as authService from "../services/auth.service";
+import * as authService from "../services/auth.service.js";
 import * as bcrypt from "bcrypt";
-import { signToken } from "../utils/jwt";
-import { client } from "../prisma/client";
+import { signToken } from "../utils/jwt.js";
+import { client } from "../prisma/client.js";
 import { z } from "zod";
-import { CheckUserName, RegisterInput } from "../types/auth.type";
+import { CheckUserName, RegisterInput } from "../types/auth.type.js";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;

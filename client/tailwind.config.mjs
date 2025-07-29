@@ -1,3 +1,5 @@
+import lineClamp from "@tailwindcss/line-clamp";
+
 export default {
   content: ["./app/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -5,7 +7,10 @@ export default {
       fontFamily: {
         sans: ["Oswald", '"Noto Sans TC"', "sans-serif"],
       },
+      colors: {
+        primary: "#babeb6",
+      },
     },
   },
-  plugins: [],
+  plugins: [lineClamp],
 };

@@ -1,4 +1,4 @@
-import { ArticleStatusFilter } from "./post.type";
+import { ArticleStatusFilter } from "./post.type.js";
 
 export interface GetCategoryPostTypes {
   skip?: number;
