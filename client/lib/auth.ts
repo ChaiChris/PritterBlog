@@ -1,15 +1,38 @@
-import * as jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import jsonwebtoken from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+export type User = {
+  id: number;
+  name: string;
+  role: string;
+  email: string;
+  avatarUrl: string;
+};
 
-export function verifyToken(token: string): string | jwt.JwtPayload | null {
-  if (!JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined");
-  }
+export async function getCurrentUserDataFromToken(): Promise<User | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) return null;
+
   try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
-    console.error("Token verification failed:", error);
+    const payload = jsonwebtoken.verify(
+      token,
+      process.env.JWT_SECRET!,
+    ) as unknown;
+
+    if (
+      typeof payload !== "object" ||
+      payload === null ||
+      !("id" in payload) ||
+      !("email" in payload)
+    ) {
+      return null;
+    }
+
+    return payload as User;
+  } catch (err) {
+    console.log("JWT 驗證錯誤:", err);
     return null;
   }
 }

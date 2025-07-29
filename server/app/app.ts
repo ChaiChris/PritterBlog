@@ -2,12 +2,18 @@ import express, { Request, Response, NextFunction } from "express";
 import { logger } from "./logger.js";
 import routes from "./routes/index.js";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-// app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
 
 // 記錄所有連線請求
 app.use((req: Request, res: Response, next: NextFunction) => {

@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,25 +10,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
+import { AuthPanelSwitch } from "@/components/auth/auth-panel-switch/auth-panel-switch";
 
-export function LoginPanel() {
-  const router = useRouter();
+export default function LoginPanel() {
   return (
-    <Card className="w-full max-w-sm shadow-2xl bg-zinc-200/70 backdrop-blur-md">
+    <Card className="w-full max-w-sm shadow-2xl bg-zinc-300/90 backdrop-blur-xl">
       <CardHeader>
         <CardTitle className={"text-zinc-700 text-xl"}>Pritter Blog</CardTitle>
-        <CardDescription className={"text-zinc-700"}>
-          請使用電子郵箱來登入 Pritter
-        </CardDescription>
         <CardAction>
-          <Button
-            className={"cursor-pointer text-zinc-800 font-bold"}
-            variant="link"
-            onClick={() => router.push("/signup")}
-          >
-            註冊
-          </Button>
+          <AuthPanelSwitch mode="register" />
         </CardAction>
       </CardHeader>
       <CardContent>

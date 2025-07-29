@@ -1,9 +1,9 @@
 // import { Request, Response } from "express";
-import { client } from "../prisma/client";
+import { client } from "../prisma/client.js";
 import * as bcrypt from "bcrypt";
-import { signToken } from "../utils/jwt";
-import { RegisterInput, CheckUserName } from "../types/auth.type";
-import { logger } from "../logger";
+import { signToken } from "../utils/jwt.js";
+import { RegisterInput, CheckUserName } from "../types/auth.type.js";
+import { logger } from "../logger.js";
 
 export const registerService = async (input: RegisterInput) => {
   const existingEmail = await client.user.findUnique({

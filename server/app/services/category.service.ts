@@ -1,4 +1,4 @@
-import { client as prisma } from "../prisma/client";
+import { client as prisma } from "../prisma/client.js";
 
 export const getAllCategories = async () => {
   return prisma.category.findMany({

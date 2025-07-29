@@ -3,7 +3,7 @@ import {
   getPostsController,
   getSinglePostController,
 } from "../controllers/post.controller.js";
-import { authMiddleware } from "../middlewares/auth.middlewares";
+import { authMiddleware } from "../middlewares/auth.middlewares.js";
 
 const router = Router();
 
