@@ -1,24 +1,38 @@
 import { cookies } from "next/headers";
 import jsonwebtoken from "jsonwebtoken";
 
-export async function getCurrentUserDataFromToken() {
-  // 只從 jsonwebtoken 拿 verify，不要拿 get
-  const { verify } = jsonwebtoken;
+export type User = {
+  id: number;
+  name: string;
+  role: string;
+  email: string;
+  avatarUrl: string;
+};
 
-  const cookieStorage = await cookies();
-  const token = cookieStorage.get("token")?.value;
+export async function getCurrentUserDataFromToken(): Promise<User | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
   if (!token) return null;
 
   try {
-    return verify(token, process.env.JWT_SECRET!) as {
-      id: number;
-      name: string;
-      email: string;
-      avatarUrl: string;
-    };
+    const payload = jsonwebtoken.verify(
+      token,
+      process.env.JWT_SECRET!,
+    ) as unknown;
+
+    if (
+      typeof payload !== "object" ||
+      payload === null ||
+      !("id" in payload) ||
+      !("email" in payload)
+    ) {
+      return null;
+    }
+
+    return payload as User;
   } catch (err) {
-    console.log(err);
+    console.log("JWT 驗證錯誤:", err);
     return null;
   }
 }

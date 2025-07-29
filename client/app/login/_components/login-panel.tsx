@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthPanelSwitch } from "@/components/auth/auth-panel-switch/auth-panel-switch";
 
-export function LoginPanel() {
+export default function LoginPanel() {
   return (
     <Card className="w-full max-w-sm shadow-2xl bg-zinc-300/90 backdrop-blur-xl">
       <CardHeader>

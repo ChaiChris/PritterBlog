@@ -1,12 +1,13 @@
 // components/layout/DashboardLayout.tsx
 import React from "react";
-import { clsx } from "clsx";
+import Header from "@/components/layout/header";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={"flex min-h-screen"}>
-      <main className="flex flex-col flex-1 justify-center items-center ">
-        <div className="flex">{children}</div>
+    <div className={"min-h-screen bg-neutral-100"}>
+      <Header isAdmin={false} isArticle={false} />
+      <main className="flex flex-col flex-1 justify-center items-center p-6 pt-[80px]">
+        {children}
       </main>
     </div>
   );
