@@ -2,9 +2,12 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getCurrentUserDataFromToken } from "@/lib/auth";
+import { useState } from "react";
 
 export default function UserPanel() {
-  const user = await getCurrentUserDataFromToken();
+  const user = getCurrentUserDataFromToken();
+  const [isLogin, seIsLogin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   return (
     <div className="flex items-center h-full space-x-4">
       {isLogin ? (
@@ -25,18 +28,12 @@ export default function UserPanel() {
             </Button>
           )}
 
-          <Button
-            variant="ghost"
-            className="text-red-500 px-4 py-2"
-            onClick={onLogout}
-          >
+          <Button variant="ghost" className="text-red-500 px-4 py-2">
             登出
           </Button>
         </div>
       ) : (
-        <Button variant="default" onClick={onLogin}>
-          登入
-        </Button>
+        <Button variant="default">登入</Button>
       )}
     </div>
   );

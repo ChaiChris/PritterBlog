@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import jsonwebtoken from "jsonwebtoken";
+import { LoginInput } from "@/types/auth";
 
 export type User = {
   id: number;
@@ -36,3 +37,5 @@ export async function getCurrentUserDataFromToken(): Promise<User | null> {
     return null;
   }
 }
+
+export async function loginUser(input: LoginInput) {}

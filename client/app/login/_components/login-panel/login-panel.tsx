@@ -1,10 +1,7 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -47,14 +44,6 @@ export default function LoginPanel() {
           </div>
         </form>
       </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button
-          type="submit"
-          className="cursor-pointer w-full bg-zinc-800/60 shadow-lg"
-        >
-          登入
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

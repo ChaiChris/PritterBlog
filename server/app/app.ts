@@ -8,12 +8,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  }),
-);
+app.use(cors());
 
 // 記錄所有連線請求
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -21,6 +16,18 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     `[${new Date().toISOString()}] ${req.ip} ${req.method} ${req.url}`,
   );
   next();
+});
+
+app.get("/test", (req, res) => {
+  try {
+    res.json({
+      message: "測試路由回應成功",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    logger.error("Test route error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 // 錯誤測試代碼
@@ -49,8 +56,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-const port = process.env.PORT || 3001;
+const port = Number(process.env.PORT) || 8080;
 
-app.listen(port, () => {
-  logger.info("Server running on http://localhost:3001 (DockerProject)");
+app.listen(port, "0.0.0.0", () => {
+  logger.info(`Server running on http://localhost:${port} (DockerProject)`);
 });

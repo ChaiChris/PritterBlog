@@ -7,7 +7,7 @@
   "type": "module",
   "main": "app.ts",
   "scripts": {
-    "dev": "tsx src/app.ts",
+    "dev": "tsx app/app.ts",
     "build": "tsc",
     "start": "node dist/app.js",
     "prisma:migrate": "prisma migrate dev",
