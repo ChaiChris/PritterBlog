@@ -32,7 +32,7 @@ app.get("/test", (req, res) => {
 
 // 錯誤測試代碼
 app.get("/error", (req, res) => {
-  throw new Error("ERROR TEST: Something went wrong");
+  throw Error("ERROR TEST: Something went wrong");
 });
 
 // 掛載路由
@@ -42,17 +42,25 @@ app.use("/api", routes);
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
 
-  logger.error({
+  const errorLog = {
     message: err.message,
     stack: err.stack,
     method: req.method,
     url: req.originalUrl,
     ip: req.ip,
-  });
+    timestamp: new Date().toISOString(),
+    statusCode,
+  };
+
+  // 同時輸出到 console 確認有執行到
+  console.error("Error middleware triggered:", errorLog);
+
+  // 使用 logger.error 記錄
+  logger.error("Request error", errorLog);
 
   res.status(statusCode).json({
     error: "Server Error",
-    message: process.env.NODE_ENV === "dev" ? err.message : undefined,
+    message: err.message,
   });
 });
 

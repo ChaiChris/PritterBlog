@@ -2,7 +2,11 @@
 import { client } from "../prisma/client.js";
 import * as bcrypt from "bcrypt";
 import { signToken } from "../utils/jwt.js";
-import { RegisterInput, CheckUserName } from "../types/auth.type.js";
+import {
+  RegisterInput,
+  CheckUserName,
+  CheckUserEmail,
+} from "../types/auth.type.js";
 import { logger } from "../logger.js";
 
 export const registerService = async (input: RegisterInput) => {
@@ -36,7 +40,7 @@ export const registerService = async (input: RegisterInput) => {
   return { token };
 };
 
-export const checkUserService = async (input: CheckUserName) => {
+export const checkUserNameService = async (input: CheckUserName) => {
   const user = await client.user.findUnique({
     where: { username: input.username },
   });
@@ -45,4 +49,15 @@ export const checkUserService = async (input: CheckUserName) => {
     return { hasNameUsed: true };
   }
   return { hasNameUsed: false };
+};
+
+export const checkUserEmailService = async (input: CheckUserEmail) => {
+  const user = await client.user.findUnique({
+    where: { email: input.email },
+  });
+  if (user) {
+    logger.info(`checkUserEmailService: 該用戶已存在：${input.email}`);
+    return { hasEmailUsed: true };
+  }
+  return { hasEmailUsed: false };
 };

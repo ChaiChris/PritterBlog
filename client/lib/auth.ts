@@ -37,5 +37,10 @@ export async function getCurrentUserDataFromToken(): Promise<User | null> {
     return null;
   }
 }
-
+//
+// export async function loginUser(input: LoginInput): Promise<LoginResult> {
+//   const { email, password } = input;
+//   if (!email || !password) {
+//   }
+// }
 export async function loginUser(input: LoginInput) {}

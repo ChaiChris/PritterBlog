@@ -4,7 +4,13 @@ import * as bcrypt from "bcrypt";
 import { signToken } from "../utils/jwt.js";
 import { client } from "../prisma/client.js";
 import { z } from "zod";
-import { CheckUserName, RegisterInput } from "../types/auth.type.js";
+import {
+  CheckUserEmail,
+  CheckUserName,
+  RegisterInput,
+} from "../types/auth.type.js";
+import { checkUserNameService } from "../services/auth.service.js";
+import { logger } from "../logger.js";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -16,6 +22,7 @@ export const login = async (req: Request, res: Response) => {
 
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
+    logger.warn(`login: ${email} 登入驗證失敗`);
     return res.status(401).json({ message: "登入驗證失敗" });
   }
 
@@ -28,6 +35,7 @@ export const login = async (req: Request, res: Response) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/",
   });
+  logger.info(`${email} 已成功登入並set Token: ` + token);
   res.status(200).json({ message: "登入成功" });
 };
 
@@ -43,6 +51,7 @@ export const register = async (req: Request, res: Response) => {
     const result = await authService.registerService(input);
     return res.status(201).json(result);
   } catch (e: any) {
+    logger.error("registerController", e);
     return res.status(400).json({ message: e.message });
   }
 };
@@ -50,9 +59,21 @@ export const register = async (req: Request, res: Response) => {
 export const checkUserName = async (req: Request, res: Response) => {
   const userNameInput: CheckUserName = req.body;
   try {
-    const result = await authService.checkUserService(userNameInput);
+    const result = await authService.checkUserNameService(userNameInput);
     return res.status(201).json(result);
   } catch (e: any) {
+    logger.error("checkUserNameController", e);
+    return res.status(400).json({ message: e.message });
+  }
+};
+
+export const checkUserEmail = async (req: Request, res: Response) => {
+  const userEmailInput: CheckUserEmail = req.body;
+  try {
+    const result = await authService.checkUserEmailService(userEmailInput);
+    return res.status(201).json(result);
+  } catch (e: any) {
+    logger.error("checkUserEmailController", e);
     return res.status(400).json({ message: e.message });
   }
 };
