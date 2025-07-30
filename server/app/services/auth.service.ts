@@ -41,6 +41,10 @@ export const registerService = async (input: RegisterInput) => {
 };
 
 export const checkUserNameService = async (input: CheckUserName) => {
+  if (!input.username) {
+    throw new Error("缺少 username");
+  }
+  logger.info(`checkUserService: 觸發：${input.username}`);
   const user = await client.user.findUnique({
     where: { username: input.username },
   });
@@ -48,16 +52,21 @@ export const checkUserNameService = async (input: CheckUserName) => {
     logger.info(`checkUserService: 該用戶已存在：${input.username}`);
     return { hasNameUsed: true };
   }
+  logger.info(`checkUserService: 該用戶不存在：${input.username}`);
   return { hasNameUsed: false };
 };
 
 export const checkUserEmailService = async (input: CheckUserEmail) => {
-  const user = await client.user.findUnique({
+  if (!input.email) {
+    throw new Error("缺少 email");
+  }
+  const email = await client.user.findUnique({
     where: { email: input.email },
   });
-  if (user) {
+  if (email) {
     logger.info(`checkUserEmailService: 該用戶已存在：${input.email}`);
     return { hasEmailUsed: true };
   }
+  logger.info(`checkUserEmailService: 該用戶不存在：${input.email}`);
   return { hasEmailUsed: false };
 };

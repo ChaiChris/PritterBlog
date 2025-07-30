@@ -8,7 +8,12 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // 前端網址
+    credentials: true, // 允許 cookie 傳遞
+  }),
+);
 
 // 記錄所有連線請求
 app.use((req: Request, res: Response, next: NextFunction) => {
