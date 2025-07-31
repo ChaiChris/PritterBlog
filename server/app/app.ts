@@ -3,17 +3,29 @@ import { logger } from "./logger.js";
 import routes from "./routes/index.js";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(cookieParser());
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 app.use(
   cors({
-    origin: "http://localhost:3000", // 前端網址
+    origin: function (origin, callback) {
+      console.log("請求來自 origin:", origin);
+      logger.info("請求來自 origin:", origin);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        logger.warn(`CORS blocked: origin ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true, // 允許 cookie 傳遞
   }),
 );
+app.use(express.json());
 
 // 記錄所有連線請求
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +38,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.get("/test", (req, res) => {
   try {
     res.json({
-      message: "測試路由回應成功",
+      message: "測試路由回應成功 v2",
       timestamp: new Date().toISOString(),
     });
   } catch (err) {

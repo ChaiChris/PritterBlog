@@ -1,13 +1,6 @@
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardAction, CardHeader, CardTitle } from "@/components/ui/card";
 import { AuthPanelSwitch } from "@/components/auth/auth-panel-switch/auth-panel-switch";
+import LoginForm from "@/app/login/_components/login-form/login-form";
 
 export default function LoginPanel() {
   return (
@@ -18,32 +11,7 @@ export default function LoginPanel() {
           <AuthPanelSwitch mode="register" />
         </CardAction>
       </CardHeader>
-      <CardContent>
-        <form>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2 text-zinc-800">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                className="bg-zinc-100/30 focus:bg-zinc-100/80"
-                id="email"
-                type="email"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center text-zinc-800">
-                <Label htmlFor="password">密碼</Label>
-              </div>
-              <Input
-                className="bg-zinc-100/30 focus:bg-zinc-100/80"
-                id="password"
-                type="password"
-                required
-              />
-            </div>
-          </div>
-        </form>
-      </CardContent>
+      <LoginForm />
     </Card>
   );
 }

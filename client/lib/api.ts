@@ -80,17 +80,23 @@ export async function fetchPosts(): Promise<PostCard[]> {
   ];
 }
 
-export async function registerUser(input: RegisterInput) {
-  const result = await fetch("http://localhost:3001/api/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-
-  if (!result.ok) {
-    const error = await result.json();
-    throw new Error("registerUser: ERROR ", error);
-  }
-
-  return result;
-}
+// export async function registerUser(input: RegisterInput) {
+//   console.log(input);
+//   const { username, password, email } = input;
+//   const result = await fetch("http://localhost:8080/api/auth/register", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       username: username,
+//       password: password,
+//       email: email,
+//     }),
+//   });
+//
+//   if (!result.ok) {
+//     const error = await result.json();
+//     throw new Error("registerUser: ERROR ", error);
+//   }
+//
+//   return result;
+// }

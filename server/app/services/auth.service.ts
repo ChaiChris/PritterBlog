@@ -1,7 +1,6 @@
-// import { Request, Response } from "express";
 import { client } from "../prisma/client.js";
 import * as bcrypt from "bcrypt";
-import { signToken } from "../utils/jwt.js";
+import * as jwtService from "../utils/jwt.js";
 import {
   RegisterInput,
   CheckUserName,
@@ -10,6 +9,7 @@ import {
 import { logger } from "../logger.js";
 
 export const registerService = async (input: RegisterInput) => {
+  logger.info("=== registerService ===");
   const existingEmail = await client.user.findUnique({
     where: { email: input.email },
   });
@@ -27,6 +27,7 @@ export const registerService = async (input: RegisterInput) => {
   }
 
   const hashedPassword = await bcrypt.hash(input.password, 10);
+  logger.info("registerService: 加密過後的密碼 ", hashedPassword);
   const newUser = await client.user.create({
     data: {
       email: input.email,
@@ -35,7 +36,7 @@ export const registerService = async (input: RegisterInput) => {
     },
   });
   logger.info(`registerService: 成功註冊：${newUser.email}`);
-  const token = signToken({ id: newUser.id });
+  const token = jwtService.signToken({ id: newUser.id });
   logger.info(`registerService: signToken success：${newUser.email}`);
   return { token };
 };
@@ -69,4 +70,20 @@ export const checkUserEmailService = async (input: CheckUserEmail) => {
   }
   logger.info(`checkUserEmailService: 該用戶不存在：${input.email}`);
   return { hasEmailUsed: false };
+};
+
+export const getProfileService = async (token: string) => {
+  const payload = await jwtService.verifyToken(token);
+
+  if (!payload || typeof payload !== "object" || !("id" in payload)) {
+    throw new Error("無效的 token");
+  }
+
+  const user = await client.user.findUnique({ where: { id: payload.id } });
+  if (!user) {
+    throw new Error("找不到使用者");
+  }
+
+  const { password, ...userInfo } = user;
+  return userInfo;
 };

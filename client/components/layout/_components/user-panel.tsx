@@ -1,16 +1,28 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getCurrentUserDataFromToken } from "@/lib/auth";
+import { getUserInfo } from "@/lib/auth";
 import { useState } from "react";
 
 export default function UserPanel() {
-  const user = getCurrentUserDataFromToken();
+  const user = getUserInfo();
   const [isLogin, seIsLogin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  return (
-    <div className="flex items-center h-full space-x-4">
-      {isLogin ? (
+  if (!isLogin) {
+    return (
+      <div className="flex items-center h-full space-x-4">
+        <Button variant="ghost" className="text-red-500 px-4 py-2">
+          登入
+        </Button>
+        <Button variant="ghost" className="text-red-500 px-4 py-2">
+          註冊
+        </Button>
+      </div>
+    );
+  }
+  if (isLogin) {
+    return (
+      <div className="flex items-center h-full space-x-4">
         <div className="flex items-center divide-x divide-zinc-300 rounded-xl bg-white shadow-sm overflow-hidden">
           <div className="flex items-center gap-3 px-4 py-2">
             <Avatar>
@@ -21,7 +33,6 @@ export default function UserPanel() {
               Chris Wood
             </span>
           </div>
-
           {isAdmin && (
             <Button asChild variant="ghost" className="text-zinc-600 px-4 py-2">
               <Link href="/admin">管理員頁面</Link>
@@ -32,9 +43,7 @@ export default function UserPanel() {
             登出
           </Button>
         </div>
-      ) : (
-        <Button variant="default">登入</Button>
-      )}
-    </div>
-  );
+      </div>
+    );
+  }
 }

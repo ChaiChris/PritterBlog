@@ -14,8 +14,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RegisterInput } from "@/types/auth";
-import { registerUser } from "@/lib/api";
 import { useState } from "react";
+import { registerUser, getUserInfo } from "@/lib/auth";
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,13 +41,15 @@ export function RegisterForm() {
       setIsLoading(true);
       const registerInput: RegisterInput = {
         email: data.email,
-        password: data.password,
         username: data.username,
+        password: data.password,
       };
 
       const doRigister = await registerUser(registerInput);
+      const userInfo = await getUserInfo();
 
       console.log("註冊成功", doRigister);
+      console.log("目前使用者", userInfo);
     } catch (error) {
       setError("root", {
         type: "manual",

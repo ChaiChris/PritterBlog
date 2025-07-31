@@ -15,9 +15,9 @@ import {
 import { LoginInput } from "@/types/auth";
 import { useState } from "react";
 import { loginSchema, loginFormValues } from "@/schemas/loginSchema";
-import { loginUser } from "@/lib/auth";
+import { getUserInfo, loginUser } from "@/lib/auth";
 
-export function LoginForm() {
+export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<loginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -36,6 +36,7 @@ export function LoginForm() {
 
   const onSubmit = async (data: loginFormValues) => {
     try {
+      console.log("開始註冊");
       setIsLoading(true);
       const loginInput: LoginInput = {
         email: data.email,
@@ -43,8 +44,10 @@ export function LoginForm() {
       };
 
       const doLogin = await loginUser(loginInput);
+      const userInfo = await getUserInfo();
 
-      console.log("註冊成功", doLogin);
+      console.log("登入成功", doLogin);
+      console.log("目前使用者", userInfo);
     } catch (error) {
       setError("root", {
         type: "manual",

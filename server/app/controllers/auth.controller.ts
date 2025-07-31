@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as authService from "../services/auth.service.js";
 import * as bcrypt from "bcrypt";
-import { signToken } from "../utils/jwt.js";
+import * as jwtService from "../utils/jwt.js";
 import { client } from "../prisma/client.js";
 import { z, ZodError } from "zod";
 import {
@@ -9,8 +9,8 @@ import {
   CheckUserName,
   RegisterInput,
 } from "../types/auth.type.js";
-import { checkUserNameService } from "../services/auth.service.js";
 import { logger } from "../logger.js";
+import { getProfileService } from "../services/auth.service.js";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -29,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   //產生 JWT
-  const token = signToken({ id: user.id });
+  const token = jwtService.signToken({ id: user.id });
 
   //把 token 存在 cookie 裡
   res.cookie("token", token, {
@@ -54,18 +54,20 @@ const UserRegisterSchema = z.object({
 });
 
 export const register = async (req: Request, res: Response) => {
+  logger.info("registerController 觸發:", req.body);
   try {
     const input: RegisterInput = UserRegisterSchema.parse(req.body);
     const result = await authService.registerService(input);
+    logger.info("registerController 註冊成功");
     return res.status(201).json(result);
   } catch (e: any) {
     if (e instanceof ZodError) {
       logger.error("registerController: input type error", e);
-      res.status(400).json({ error: e.message });
-    } else {
-      logger.error("registerController", e);
+      return res.status(400).json({ error: e });
     }
-    return res.status(400).json({ message: e.message });
+
+    logger.error("registerController", e);
+    return res.status(400).json({ message: e.message || "註冊失敗" });
   }
 };
 
@@ -85,6 +87,20 @@ export const checkUserEmail = async (req: Request, res: Response) => {
   try {
     const result = await authService.checkUserEmailService(userEmailInput);
     return res.status(201).json(result);
+  } catch (e: any) {
+    logger.error("checkUserEmailController", e);
+    return res.status(400).json({ message: e.message });
+  }
+};
+
+export const getProfile = async (req: Request, res: Response) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ message: "未登入" });
+  }
+  try {
+    const result = await authService.getProfileService(token);
+    return res.status(200).json(result);
   } catch (e: any) {
     logger.error("checkUserEmailController", e);
     return res.status(400).json({ message: e.message });
