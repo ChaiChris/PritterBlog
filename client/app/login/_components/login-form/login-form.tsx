@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, RegisterFormValues } from "@/schemas/registerSchema";
 import { useForm, FormProvider } from "react-hook-form";
 import {
   FormField,
@@ -13,19 +12,18 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { RegisterInput } from "@/types/auth";
+import { LoginInput } from "@/types/auth";
 import { useState } from "react";
-import { registerUser, getUserInfo } from "@/lib/auth";
+import { loginSchema, loginFormValues } from "@/schemas/loginSchema";
+import { getUserInfo, loginUser } from "@/lib/auth";
 
-export function RegisterForm() {
+export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<loginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
@@ -36,19 +34,19 @@ export function RegisterForm() {
     formState: { errors },
   } = form;
 
-  const onSubmit = async (data: RegisterFormValues) => {
+  const onSubmit = async (data: loginFormValues) => {
     try {
+      console.log("開始註冊");
       setIsLoading(true);
-      const registerInput: RegisterInput = {
+      const loginInput: LoginInput = {
         email: data.email,
-        username: data.username,
         password: data.password,
       };
 
-      const doRigister = await registerUser(registerInput);
+      const doLogin = await loginUser(loginInput);
       const userInfo = await getUserInfo();
 
-      console.log("註冊成功", doRigister);
+      console.log("登入成功", doLogin);
       console.log("目前使用者", userInfo);
     } catch (error) {
       setError("root", {
@@ -65,20 +63,6 @@ export function RegisterForm() {
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-6">
-            <FormField
-              control={control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-zinc-800">使用者名稱</FormLabel>
-                  <FormControl>
-                    <Input id="username" type="text" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-red-800" />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={control}
               name="email"
@@ -106,20 +90,6 @@ export function RegisterForm() {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-zinc-800">確認密碼</FormLabel>
-                  <FormControl>
-                    <Input id="confirm_password" type="password" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-red-800" />
-                </FormItem>
-              )}
-            />
           </div>
 
           {errors.root?.message && (
@@ -132,7 +102,7 @@ export function RegisterForm() {
               className="cursor-pointer w-full bg-zinc-800/80"
               disabled={isLoading}
             >
-              {isLoading ? "註冊中..." : "註冊"}
+              {isLoading ? "登入中..." : "登入"}
             </Button>
           </div>
         </form>

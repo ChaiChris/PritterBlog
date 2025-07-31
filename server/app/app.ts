@@ -3,17 +3,29 @@ import { logger } from "./logger.js";
 import routes from "./routes/index.js";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(cookieParser());
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    credentials: true,
+    origin: function (origin, callback) {
+      console.log("請求來自 origin:", origin);
+      logger.info("請求來自 origin:", origin);
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        logger.warn(`CORS blocked: origin ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // 允許 cookie 傳遞
   }),
 );
+app.use(express.json());
 
 // 記錄所有連線請求
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -23,9 +35,21 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+app.get("/test", (req, res) => {
+  try {
+    res.json({
+      message: "測試路由回應成功 v2",
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    logger.error("Test route error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // 錯誤測試代碼
 app.get("/error", (req, res) => {
-  throw new Error("ERROR TEST: Something went wrong");
+  throw Error("ERROR TEST: Something went wrong");
 });
 
 // 掛載路由
@@ -35,22 +59,30 @@ app.use("/api", routes);
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
 
-  logger.error({
+  const errorLog = {
     message: err.message,
     stack: err.stack,
     method: req.method,
     url: req.originalUrl,
     ip: req.ip,
-  });
+    timestamp: new Date().toISOString(),
+    statusCode,
+  };
+
+  // 同時輸出到 console 確認有執行到
+  console.error("Error middleware triggered:", errorLog);
+
+  // 使用 logger.error 記錄
+  logger.error("Request error", errorLog);
 
   res.status(statusCode).json({
     error: "Server Error",
-    message: process.env.NODE_ENV === "dev" ? err.message : undefined,
+    message: err.message,
   });
 });
 
-const port = process.env.PORT || 3001;
+const port = Number(process.env.PORT) || 8080;
 
-app.listen(port, () => {
-  logger.info("Server running on http://localhost:3001 (DockerProject)");
+app.listen(port, "0.0.0.0", () => {
+  logger.info(`Server running on http://localhost:${port} (DockerProject)`);
 });

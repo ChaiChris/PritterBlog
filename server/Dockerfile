@@ -1,8 +1,8 @@
-FROM node:18
-WORKDIR /app/server
+FROM node:19
+WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npx prisma generate
-EXPOSE 3001
+EXPOSE 8080
 CMD [ "npm", "start" ]

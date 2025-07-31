@@ -11,3 +11,6 @@ export interface AuthToken {
 export interface CheckUserName {
   username: string;
 }
+export interface CheckUserEmail {
+  email: string;
+}

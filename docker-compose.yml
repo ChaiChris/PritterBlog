@@ -3,11 +3,9 @@ services:
     build:
       context: ./server
     ports:
-      - "3001:3001"
+      - "8080:8080"
     env_file:
-      - .env
-    volumes:
-      - ./server:/app
+      - ./server/.env
     depends_on:
       - db
     restart: always
@@ -17,15 +15,18 @@ services:
       context: ./client
     ports:
       - "3000:3000"
+    env_file:
+      - ./client/.env
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3000/api
     depends_on:
       - server
     restart: always
 
-
   db:
     image: postgres:15
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: forumdb
       POSTGRES_USER: chris
