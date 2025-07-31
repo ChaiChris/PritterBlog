@@ -13,12 +13,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { LoginInput } from "@/types/auth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { loginSchema, loginFormValues } from "@/schemas/loginSchema";
-import { getUserInfo, loginUser } from "@/lib/auth";
+import { loginUser } from "@/lib/auth";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const {
+    user,
+    isLoading: userLoading,
+    isError: userError,
+    refresh: refreshUser,
+  } = useCurrentUser();
   const [isLoading, setIsLoading] = useState(false);
+
+  // useEffect(() => {
+  //   if (user) {
+  //     router.push("/");
+  //   }
+  // }, [user]);
+
   const form = useForm<loginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -44,10 +60,26 @@ export default function LoginForm() {
       };
 
       const doLogin = await loginUser(loginInput);
-      const userInfo = await getUserInfo();
-
-      console.log("登入成功", doLogin);
-      console.log("目前使用者", userInfo);
+      if (doLogin) {
+        console.log("登入成功", doLogin);
+        await refreshUser();
+        if (user) {
+          console.log("目前使用者", user);
+          router.push("/");
+        } else {
+          console.error("使用者資訊未正確載入");
+          setError("root", {
+            type: "manual",
+            message: "登入成功，但無法載入使用者資訊",
+          });
+        }
+      } else {
+        console.error("登入失敗，未返回使用者資訊");
+        setError("root", {
+          type: "manual",
+          message: "登入失敗，請稍後再試",
+        });
+      }
     } catch (error) {
       setError("root", {
         type: "manual",
@@ -57,7 +89,7 @@ export default function LoginForm() {
       setIsLoading(false);
     }
   };
-
+  if (isLoading) return <p>載入中...</p>;
   return (
     <CardContent>
       <FormProvider {...form}>

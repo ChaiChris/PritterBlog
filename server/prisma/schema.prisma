@@ -18,6 +18,7 @@ model User {
     id          Int         @id @default(autoincrement())
     email       String      @unique  // 唯一值驗證
     password    String
+    avatarPath  String?     @db.VarChar(500)
     username    String      @unique @db.VarChar(50)
     role        Role        @default(USER)
     createdAt   DateTime    @default(now())

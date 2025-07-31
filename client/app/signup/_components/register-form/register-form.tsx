@@ -14,10 +14,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RegisterInput } from "@/types/auth";
-import { useState } from "react";
-import { registerUser, getUserInfo } from "@/lib/auth";
+import { useState, useEffect } from "react";
+import { registerUser } from "@/lib/auth";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { useRouter } from "next/navigation";
 
 export function RegisterForm() {
+  const {
+    user,
+    isLoading: userLoading,
+    isError: userError,
+    refresh: refreshUser,
+  } = useCurrentUser();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -28,6 +37,12 @@ export function RegisterForm() {
       confirmPassword: "",
     },
   });
+
+  // useEffect(() => {
+  //   if (user) {
+  //     router.push("/");
+  //   }
+  // }, [user]);
 
   const {
     handleSubmit,
@@ -46,10 +61,26 @@ export function RegisterForm() {
       };
 
       const doRigister = await registerUser(registerInput);
-      const userInfo = await getUserInfo();
-
-      console.log("註冊成功", doRigister);
-      console.log("目前使用者", userInfo);
+      if (doRigister) {
+        console.log("註冊成功", doRigister);
+        await refreshUser();
+        if (user) {
+          console.log("目前使用者", user);
+          router.push("/");
+        } else {
+          console.error("使用者資訊未正確載入");
+          setError("root", {
+            type: "manual",
+            message: "註冊成功，但無法載入使用者資訊",
+          });
+        }
+      } else {
+        console.error("註冊失敗，未返回使用者資訊");
+        setError("root", {
+          type: "manual",
+          message: "註冊失敗，請稍後再試",
+        });
+      }
     } catch (error) {
       setError("root", {
         type: "manual",

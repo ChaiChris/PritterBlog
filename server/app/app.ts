@@ -23,14 +23,14 @@ app.use(
       }
     },
     credentials: true, // 允許 cookie 傳遞
-  }),
+  })
 );
 app.use(express.json());
 
 // 記錄所有連線請求
 app.use((req: Request, res: Response, next: NextFunction) => {
   logger.info(
-    `[${new Date().toISOString()}] ${req.ip} ${req.method} ${req.url}`,
+    `[${new Date().toISOString()}] ${req.ip} ${req.method} ${req.url}`
   );
   next();
 });
@@ -55,6 +55,21 @@ app.get("/error", (req, res) => {
 // 掛載路由
 app.use("/api", routes);
 
+app.get("/debug-cookie", (req, res) => {
+  console.log("All cookies:", req.cookies);
+  console.log("Raw cookie header:", req.headers.cookie);
+  res.json({
+    cookies: req.cookies,
+    rawCookie: req.headers.cookie,
+    tokenExists: !!req.cookies?.token,
+  });
+});
+
+app.post("/clear-cookie", (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "Cookie 已清理" });
+});
+
 // 紀錄錯誤
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
@@ -69,10 +84,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     statusCode,
   };
 
-  // 同時輸出到 console 確認有執行到
   console.error("Error middleware triggered:", errorLog);
-
-  // 使用 logger.error 記錄
   logger.error("Request error", errorLog);
 
   res.status(statusCode).json({

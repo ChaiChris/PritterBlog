@@ -2,6 +2,7 @@ import PostCard from "@/components/post-card/post-card";
 import { useEffect, useState } from "react";
 import { fetchPosts } from "@/lib/api";
 import { PostCard as PostCardProps } from "@/types/post";
+import { Link } from "lucide-react";
 
 export default function PostList({ theme }: { theme: string }) {
   const [posts, setPosts] = useState<PostCardProps[]>([]);

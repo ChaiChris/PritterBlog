@@ -29,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   //產生 JWT
-  const token = jwtService.signToken({ id: user.id });
+  const token = await jwtService.signToken({ id: user.id });
 
   //把 token 存在 cookie 裡
   res.cookie("token", token, {
@@ -44,6 +44,15 @@ export const login = async (req: Request, res: Response) => {
   });
   logger.info(`${email} 已成功登入並set Token: ` + token);
   res.status(200).json({ message: "登入成功" });
+};
+
+export const logout = async (req: Request, res: Response) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    maxAge: 0, // 清除 cookie
+  });
+  logger.info("使用者已登出，清除 token cookie");
+  return res.status(200).json({ message: "登出成功" });
 };
 
 // zod 驗證 Schema
