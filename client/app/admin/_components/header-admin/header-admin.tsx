@@ -3,17 +3,15 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import UserPanel from "./_components/user-panel";
-interface HeaderProps {
-  isArticle?: boolean;
-}
+import UserPanelAdmin from "./user-panel-admin/user-panel-admin";
 // ${isArticle ? "backdrop-blur-lg" : ""}
-export default function Header({ isArticle = false }: HeaderProps) {
+export default function HeaderAdmin() {
   return (
     <header
       className={`fixed top-0 left-0 z-50 w-full flex justify-between items-center h-[80px] px-6`}
     >
       <div className="flex flex-col gap-2">
-        {isArticle ? (
+        {/* {isArticle ? (
           <Button
             asChild
             variant="ghost"
@@ -24,15 +22,13 @@ export default function Header({ isArticle = false }: HeaderProps) {
               返回文章列表
             </Link>
           </Button>
-        ) : (
-          <div className="text-lg text-zinc-800 font-semibold">
-            Pritter Blog
-          </div>
-        )}
+        ) : ( */}
+        <div className="text-lg text-zinc-800 font-semibold">Pritter ADMIN</div>
+        {/* )} */}
       </div>
 
       <div className="flex items-center h-full">
-        <UserPanel />
+        <UserPanelAdmin />
       </div>
     </header>
   );

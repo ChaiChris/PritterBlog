@@ -36,7 +36,7 @@ export const registerService = async (input: RegisterInput) => {
     },
   });
   logger.info(`registerService: 成功註冊：${newUser.email}`);
-  const token = jwtService.signToken({ id: newUser.id });
+  const token = await jwtService.signToken({ id: newUser.id });
   logger.info(`registerService: signToken success：${newUser.email}`);
   return { token };
 };

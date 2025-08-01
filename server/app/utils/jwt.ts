@@ -14,6 +14,10 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function signToken(payload: JWTPayload): Promise<string> {
   logger.info("SECRET_KEY: ", Array.from(SECRET_KEY));
+  if (!process.env.JWT_SECRET) {
+    logger.error("JWT_SECRET env 未設置");
+    throw new Error("JWT_SECRET env 未設置");
+  }
   try {
     return await new SignJWT(payload)
       .setProtectedHeader({ alg: "HS256" })

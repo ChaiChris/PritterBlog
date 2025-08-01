@@ -2,20 +2,17 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { logoutUser } from "@/lib/auth";
 
-export default function UserPanel() {
+export default function UserPanelAdmin() {
   const { user, isLoading, isError, refresh } = useCurrentUser();
-  const handleLogout = async () => {
-    try {
-      await logoutUser(); // 呼叫後端 API 清除 cookie/token
-      refresh(); // 用於重抓當前使用者（或強制讓 useSWR 返回 null）
-    } catch (error) {
-      console.error("登出失敗", error);
-    }
-  };
+  if (isLoading || isError) {
+    return <></>;
+  }
+  if (user.role !== "ADMIN") {
+    return <></>;
+  }
 
-  if (isLoading || isError || !user) {
+  if (!user) {
     return (
       <div className="flex items-center h-full space-x-4">
         <Link href="/login">
@@ -53,15 +50,17 @@ export default function UserPanel() {
             </span>
           </div>
           {user.role === "ADMIN" && (
-            <Button variant="ghost" className="text-zinc-600 ">
-              <Link href="/admin">管理員頁面</Link>
+            <Button variant="ghost" className="text-zinc-600 cursor-pointer">
+              <Link href="/admin">Pritter Blog</Link>
             </Button>
           )}
 
           <Button
             variant="ghost"
-            className="text-red-600"
-            onClick={handleLogout}
+            className="text-red-600 cursor-pointer"
+            onClick={() => {
+              // TODO: 加入登出邏輯
+            }}
           >
             登出
           </Button>

@@ -5,7 +5,7 @@ import { verifyToken } from "../utils/jwt.js";
 export const authMiddleware = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   // 從 Authorization 標頭中讀取 token
   const token = req.cookies.token;

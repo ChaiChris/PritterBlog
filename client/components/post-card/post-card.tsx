@@ -14,7 +14,7 @@ export default function PostCard({ post }: PostCardProps) {
         />
 
         {/* 濾鏡層 */}
-        <div className="absolute inset-0 z-10 bg-black/30 backdrop-blur-sm transition-all duration-700 ease-out group-hover:bg-black/50 group-hover:backdrop-blur-md" />
+        <div className="absolute inset-0 z-10 bg-black/30 backdrop-blur-xs transition-all duration-700 ease-out group-hover:bg-black/50 group-hover:backdrop-blur-md" />
 
         {/* 內容層 */}
         <div className="relative z-20 py-5 gap-5">

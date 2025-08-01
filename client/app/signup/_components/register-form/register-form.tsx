@@ -26,8 +26,15 @@ export function RegisterForm() {
     isError: userError,
     refresh: refreshUser,
   } = useCurrentUser();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  useEffect(() => {
+    if (user) {
+      router.push("/blog");
+    }
+  }, [user, router]);
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -37,12 +44,6 @@ export function RegisterForm() {
       confirmPassword: "",
     },
   });
-
-  // useEffect(() => {
-  //   if (user) {
-  //     router.push("/");
-  //   }
-  // }, [user]);
 
   const {
     handleSubmit,
@@ -62,24 +63,8 @@ export function RegisterForm() {
 
       const doRigister = await registerUser(registerInput);
       if (doRigister) {
-        console.log("註冊成功", doRigister);
+        console.log("註冊成功");
         await refreshUser();
-        if (user) {
-          console.log("目前使用者", user);
-          router.push("/");
-        } else {
-          console.error("使用者資訊未正確載入");
-          setError("root", {
-            type: "manual",
-            message: "註冊成功，但無法載入使用者資訊",
-          });
-        }
-      } else {
-        console.error("註冊失敗，未返回使用者資訊");
-        setError("root", {
-          type: "manual",
-          message: "註冊失敗，請稍後再試",
-        });
       }
     } catch (error) {
       setError("root", {
