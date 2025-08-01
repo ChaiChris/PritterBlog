@@ -1,13 +1,8 @@
-"use client";
-import { useState, useEffect } from "react";
-import { fetchPosts } from "@/lib/api";
 import PostList from "@/app/blog/_components/post-list/post-list";
 import NavigationBar from "@/app/blog/_components/navigation-bar/navigation-bar";
 import Header from "@/components/layout/header";
 
 export default function Blog() {
-  const [theme, setTheme] = useState("new");
-
   return (
     <>
       <Header isArticle={false} />

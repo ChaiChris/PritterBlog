@@ -12,6 +12,12 @@ export const MAC_SYMBOLS: Record<string, string> = {
   backspace: "Del",
 } as const
 
+export function cn(
+  ...classes: (string | boolean | undefined | null)[]
+): string {
+  return classes.filter(Boolean).join(" ")
+}
+
 /**
  * Determines if the current platform is macOS
  * @returns boolean indicating if the current platform is Mac
@@ -100,19 +106,6 @@ export const isNodeInSchema = (
  */
 export function isValidPosition(pos: number | null | undefined): pos is number {
   return typeof pos === "number" && pos >= 0
-}
-
-/**
- * Utility function to conditionally join class names into a single string.
- * Filters out falsey values like false, undefined, null, and empty strings.
- *
- * @param classes - List of class name strings or falsey values.
- * @returns A single space-separated string of valid class names.
- */
-export function cn(
-  ...classes: (string | boolean | undefined | null)[]
-): string {
-  return classes.filter(Boolean).join(" ")
 }
 
 /**
@@ -269,7 +262,8 @@ export const handleImageUpload = async (
     )
   }
 
-  // For demo/testing: Simulate upload progress
+  // For demo/testing: Simulate upload progress. In production, replace the following code
+  // with your own upload implementation.
   for (let progress = 0; progress <= 100; progress += 10) {
     if (abortSignal?.aborted) {
       throw new Error("Upload cancelled")
@@ -279,53 +273,6 @@ export const handleImageUpload = async (
   }
 
   return "/images/tiptap-ui-placeholder-image.jpg"
-
-  // Uncomment for production use:
-  // return convertFileToBase64(file, abortSignal);
-}
-
-/**
- * Converts a File to base64 string
- * @param file The file to convert
- * @param abortSignal Optional AbortSignal for cancelling the conversion
- * @returns Promise resolving to the base64 representation of the file
- */
-export const convertFileToBase64 = (
-  file: File,
-  abortSignal?: AbortSignal
-): Promise<string> => {
-  if (!file) {
-    return Promise.reject(new Error("No file provided"))
-  }
-
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-
-    const abortHandler = () => {
-      reader.abort()
-      reject(new Error("Upload cancelled"))
-    }
-
-    if (abortSignal) {
-      abortSignal.addEventListener("abort", abortHandler)
-    }
-
-    reader.onloadend = () => {
-      if (abortSignal) {
-        abortSignal.removeEventListener("abort", abortHandler)
-      }
-
-      if (typeof reader.result === "string") {
-        resolve(reader.result)
-      } else {
-        reject(new Error("Failed to convert File to base64"))
-      }
-    }
-
-    reader.onerror = (error) =>
-      reject(new Error(`File reading error: ${error}`))
-    reader.readAsDataURL(file)
-  })
 }
 
 type ProtocolOptions = {

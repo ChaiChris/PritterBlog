@@ -44,9 +44,9 @@ body,
   background: transparent;
 }
 
-.tiptap.ProseMirror {
-  font-family: "DM Sans", sans-serif;
-}
+// .tiptap.ProseMirror {
+//   font-family: "DM Sans", sans-serif;
+// }
 
 .simple-editor-wrapper {
   display: flex;
@@ -65,11 +65,11 @@ body,
 
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
   flex: 1;
-  padding: 3rem 3rem;
+  padding: 3rem 3rem 30vh;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 480px) {
   .simple-editor-content .tiptap.ProseMirror.simple-editor {
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.5rem 30vh;
   }
 }

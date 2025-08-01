@@ -6,6 +6,7 @@ import type { Editor } from "@tiptap/react"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 // --- Lib ---
 import { isMarkInSchema, isNodeTypeSelected } from "@/lib/tiptap-utils"
@@ -173,6 +174,7 @@ export function useMark(config: UseMarkConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const isMobile = useIsMobile()
   const [isVisible, setIsVisible] = React.useState<boolean>(true)
   const canToggle = canToggleMark(editor, type)
   const isActive = isMarkActive(editor, type)
@@ -211,7 +213,7 @@ export function useMark(config: UseMarkConfig) {
     },
     {
       enabled: isVisible && canToggle,
-      enableOnContentEditable: true,
+      enableOnContentEditable: !isMobile,
       enableOnFormTags: true,
     }
   )

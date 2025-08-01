@@ -1,16 +1,10 @@
-"use client";
-import { useState, useEffect } from "react";
-import { fetchPosts } from "@/lib/api";
-import PostList from "@/app/home/_components/post-list/post-list";
-import NavigationBar from "@/app/home/_components/navigation-bar/navigation-bar";
-import NavigationBarAdmin from "./_components/navigation-bar/navigation-bar";
+import { WelcomeAni } from "./_components/welcome-ani/welcome-ani";
 
 export default function AdminPage() {
   return (
     <>
-      {/*<PostCard post={post} />*/}
-      <div className="flex flex-col gap-6 ">
-        <NavigationBarAdmin />
+      <div className="welcome max-w-[500px] flex justify-center items-center h-screen">
+        <WelcomeAni />
       </div>
     </>
   );

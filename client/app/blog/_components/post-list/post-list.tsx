@@ -1,3 +1,4 @@
+"use client";
 import PostCard from "@/components/post-card/post-card";
 import { useEffect, useState } from "react";
 import { fetchPosts } from "@/lib/api";

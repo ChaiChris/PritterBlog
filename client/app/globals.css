@@ -126,3 +126,6 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@import "../styles/_variables.scss";
+@import "../styles/_keyframe-animations.scss";

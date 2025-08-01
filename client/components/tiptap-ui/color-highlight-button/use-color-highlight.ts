@@ -6,6 +6,7 @@ import { useHotkeys } from "react-hotkeys-hook"
 
 // --- Hooks ---
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 // --- Lib ---
 import { isMarkInSchema, isNodeTypeSelected } from "@/lib/tiptap-utils"
@@ -158,6 +159,7 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
   } = config
 
   const { editor } = useTiptapEditor(providedEditor)
+  const isMobile = useIsMobile()
   const [isVisible, setIsVisible] = React.useState<boolean>(true)
   const canColorHighlightState = canColorHighlight(editor)
   const isActive = isColorHighlightActive(editor, highlightColor)
@@ -182,15 +184,26 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
     if (!editor || !canColorHighlightState || !highlightColor || !label)
       return false
 
-    const success = editor
-      .chain()
-      .focus()
-      .toggleMark("highlight", { color: highlightColor })
-      .run()
-    if (success) {
-      onApplied?.({ color: highlightColor, label })
+    if (editor.state.storedMarks) {
+      const highlightMarkType = editor.schema.marks.highlight
+      if (highlightMarkType) {
+        editor.view.dispatch(
+          editor.state.tr.removeStoredMark(highlightMarkType)
+        )
+      }
     }
-    return success
+
+    setTimeout(() => {
+      const success = editor
+        .chain()
+        .focus()
+        .toggleMark("highlight", { color: highlightColor })
+        .run()
+      if (success) {
+        onApplied?.({ color: highlightColor, label })
+      }
+      return success
+    }, 0)
   }, [canColorHighlightState, highlightColor, editor, label, onApplied])
 
   const handleRemoveHighlight = React.useCallback(() => {
@@ -209,7 +222,7 @@ export function useColorHighlight(config: UseColorHighlightConfig) {
     },
     {
       enabled: isVisible && canColorHighlightState,
-      enableOnContentEditable: true,
+      enableOnContentEditable: !isMobile,
       enableOnFormTags: true,
     }
   )
