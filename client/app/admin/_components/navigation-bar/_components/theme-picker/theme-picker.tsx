@@ -4,13 +4,15 @@ import Link from "next/link";
 export default function AdminMenu() {
   return (
     <div className="theme-bar flex gap-6">
-      <Button
-        variant="ghost"
-        value={"1"}
-        className="theme-item p-[10px] text-md cursor-pointer text-zinc-500 transition-all duration-200"
-      >
-        文章列表
-      </Button>
+      <Link href={"/admin/list"}>
+        <Button
+          variant="ghost"
+          value={"1"}
+          className="theme-item p-[10px] text-md cursor-pointer text-zinc-500 transition-all duration-200"
+        >
+          文章列表
+        </Button>
+      </Link>
       <Link href={"/admin/new"}>
         <Button
           variant="ghost"

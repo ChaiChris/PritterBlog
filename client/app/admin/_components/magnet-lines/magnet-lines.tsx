@@ -1,10 +1,11 @@
+"use client";
 import { useRef, useEffect } from "react";
 
-function MagnetLines({
-  rows = 9,
-  columns = 9,
+export default function MagnetLines({
+  rows = 5,
+  columns = 8,
   containerSize = "80vmin",
-  lineColor = "#efefef",
+  lineColor = "#969C9D",
   lineWidth = "1vmin",
   lineHeight = "6vmin",
   baseAngle = -10,
@@ -65,8 +66,8 @@ function MagnetLines({
           height: lineHeight,
           transform: "rotate(var(--rotate))",
           willChange: "transform",
-          ["--rotate" as any]: `${baseAngle}deg`,
-        } as React.CSSProperties & Record<string, any>
+          ["--rotate" as `--${string}`]: `${baseAngle}deg`,
+        } as React.CSSProperties & { [key: `--${string}`]: string }
       }
     />
   ));
@@ -87,5 +88,3 @@ function MagnetLines({
     </div>
   );
 }
-
-export { MagnetLines };

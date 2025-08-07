@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8080";
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
 
 export const axiosCategoryInstance = axios.create({
   baseURL: `${SERVER_URL}/api/category`,
@@ -10,9 +10,7 @@ export const axiosCategoryInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
-export const fetcher: <T = any>(url: string) => Promise<T> = async (
-  url: string
-) => {
+export const fetcher = async <T = unknown>(url: string): Promise<T> => {
   const res = await axiosCategoryInstance.get<T>(url);
   return res.data;
 };
@@ -25,11 +23,14 @@ export async function getCategoriesList() {
     } else {
       throw new Error("獲取分類列表失敗");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("getCategoriesList error", error);
-    throw new Error(
-      error?.response?.data?.message || "獲取分類列表時發生錯誤，請稍後再試"
-    );
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "獲取分類列表時發生錯誤，請稍後再試"
+      );
+    }
+    throw error;
   }
 }
 
@@ -38,13 +39,14 @@ export async function getCategoryPosts(categoryId: number) {
     const res = await axiosCategoryInstance.get(`/posts/${categoryId}`);
     if (res.status === 200) {
       return res.data;
-    } else {
-      throw new Error("獲取分類文章失敗");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("getCategoryPosts error", error);
-    throw new Error(
-      error?.response?.data?.message || "獲取分類文章時發生錯誤，請稍後再試"
-    );
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "獲取分類文章時發生錯誤，請稍後再試"
+      );
+    }
+    throw error;
   }
 }

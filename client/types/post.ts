@@ -1,20 +1,46 @@
 export interface PostCard {
   id: number;
   title: string;
-  content: string;
-  photoUrl?: string;
-  createdAt: string;
-  author: {
+  body: string;
+  bodyText: string;
+  coverImagePath: string;
+  updatedAt: string;
+  user?: {
     id: number;
-    name: string;
-    avatarUrl?: string;
+    username: string;
+    avatarPath?: string;
   };
 }
-
-export type PostListProps = {
-  posts: PostCard[];
-};
 
 export type PostCardProps = {
   post: PostCard;
 };
+
+export interface GetSinglePostTypes {
+  id: number;
+  title: string;
+  body: string;
+  coverImagePath: string;
+  updatedAt: string;
+  user?: {
+    id: number;
+    username: string;
+    avatarPath?: string;
+  };
+}
+
+export interface PostsResponse {
+  posts: PostCard[];
+  total: number;
+  totalPages: number;
+  currentPage: number;
+}
+
+export interface UsePostsParams {
+  limit?: number;
+  categoryId?: number;
+  author?: string;
+  title?: string;
+  status?: string;
+  initialData?: PostsResponse;
+}

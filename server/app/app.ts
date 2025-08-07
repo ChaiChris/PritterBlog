@@ -4,6 +4,11 @@ import routes from "./routes/index.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -26,6 +31,8 @@ app.use(
   })
 );
 app.use(express.json());
+
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // 記錄所有連線請求
 app.use((req: Request, res: Response, next: NextFunction) => {

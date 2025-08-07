@@ -7,7 +7,8 @@ if (!process.env.JWT_SECRET) {
 
 type TokenPayload = {
   id: number;
-  [key: string]: unknown;
+  email?: string;
+  name?: string;
 };
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -51,14 +52,13 @@ export async function verifyToken(token: string): Promise<TokenPayload> {
   } catch (err) {
     console.error("驗證 token 失敗:", err);
 
-    // 提供更詳細的錯誤訊息
     if (err instanceof Error) {
       if (err.message.includes("JWSInvalid")) {
         throw new Error("JWT 格式無效");
       } else if (err.message.includes("JWTExpired")) {
         throw new Error("JWT 已過期");
       } else if (err.message.includes("Token 格式錯誤")) {
-        throw err; // 重新拋出我們自定義的錯誤
+        throw err;
       }
     }
 

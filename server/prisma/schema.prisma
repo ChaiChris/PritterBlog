@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-    binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
+  binaryTargets = ["native", "darwin-arm64", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
@@ -36,7 +36,7 @@ model Post {
     userId          Int
     title           String          @db.VarChar(200)
     coverImagePath  String?         @db.VarChar(500)  // 封面圖片
-    body            String
+    body            String          
     status          ArticleStatus   @default(PUBLISHED)
     comments        Comment[]
     createdAt       DateTime        @default(now())

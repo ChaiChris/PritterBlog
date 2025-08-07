@@ -1,29 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 body {
-  --tt-toolbar-height: 44px;
+  --tt-toolbar-height: 52px;
   --tt-theme-text: var(--tt-gray-light-900);
 
-  .dark & {
-    --tt-theme-text: var(--tt-gray-dark-900);
-  }
+  // .dark & {
+  //   --tt-theme-text: var(--tt-gray-dark-900);
+  // }
 }
 
-body {
-  font-family: "Inter", sans-serif;
-  color: var(--tt-theme-text);
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  padding: 0;
-}
+// body {
+//   // font-family: "Inter", sans-serif;
+//   color: var(--tt-theme-text);
+//   font-optical-sizing: auto;
+//   font-weight: 400;
+//   font-style: normal;
+//   padding: 0;
+// }
 
 html,
 body,
 #root,
 #app {
   height: 100%;
-  background-color: var(--tt-bg-color);
+  background-color: var(--tt-gray-light-100);
 }
 
 ::-webkit-scrollbar {
@@ -44,13 +44,17 @@ body,
   background: transparent;
 }
 
-// .tiptap.ProseMirror {
-//   font-family: "DM Sans", sans-serif;
-// }
+.tiptap.ProseMirror {
+  // font-family: "DM Sans", sans-serif;
+  padding: 16px 10px;
+}
 
 .simple-editor-wrapper {
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px 12px 0 0;
+  height: fit-content;
 }
 
 .simple-editor-content {
@@ -65,11 +69,11 @@ body,
 
 .simple-editor-content .tiptap.ProseMirror.simple-editor {
   flex: 1;
-  padding: 3rem 3rem 30vh;
+  padding: 3rem 3rem 10vh;
 }
 
 @media screen and (max-width: 480px) {
   .simple-editor-content .tiptap.ProseMirror.simple-editor {
-    padding: 1rem 1.5rem 30vh;
+    padding: 1rem 1.5rem 10vh;
   }
 }

@@ -234,13 +234,13 @@
   &[data-state="open"]:not([disabled]) {
     background-color: var(--tt-button-active-bg-color);
     color: var(--tt-button-active-text-color);
-
+    // box-shadow: 0 0 2px 2px #00000012;
     .tiptap-button-icon {
-      color: var(--tt-button-active-icon-color);
+      // color: var(--tt-button-active-icon-color);
     }
 
     .tiptap-button-icon-sub {
-      color: var(--tt-button-active-icon-sub-color);
+      // color: var(--tt-button-active-icon-sub-color);
     }
 
     .tiptap-button-dropdown-arrows,

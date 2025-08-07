@@ -1,6 +1,6 @@
 import useSWR, { mutate } from "swr";
 const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8080";
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
 const fetcher = (url: string) =>
   fetch(url, { credentials: "include" }).then((res) => {
     if (res.status === 401) {

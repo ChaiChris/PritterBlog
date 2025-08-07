@@ -3,6 +3,7 @@ import { GetCategoryPostTypes } from "../types/category.type.js";
 import { logger } from "../logger.js";
 import * as categoryService from "../services/category.service.js";
 import z from "zod";
+import { getPostCount } from "../services/post.service.js";
 
 export const getCategoriesController = async (req: Request, res: Response) => {
   try {

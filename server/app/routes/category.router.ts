@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { getCategoriesController } from "../controllers/category.controller.js";
-const router = Router();
+const app = Router();
 
-router.get("/all", getCategoriesController);
+app.get("/all", getCategoriesController);
 // router.get("/:id", getCategoryPostsController);
 
-export default router;
+export default app;

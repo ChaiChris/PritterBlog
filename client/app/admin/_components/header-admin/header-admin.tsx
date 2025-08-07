@@ -1,8 +1,4 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
-import UserPanel from "./_components/user-panel";
+"use Client";
 import UserPanelAdmin from "./user-panel-admin/user-panel-admin";
 // ${isArticle ? "backdrop-blur-lg" : ""}
 export default function HeaderAdmin() {

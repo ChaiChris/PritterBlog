@@ -10,7 +10,7 @@ interface HeaderProps {
 export default function Header({ isArticle = false }: HeaderProps) {
   return (
     <header
-      className={`fixed top-0 left-0 z-50 w-full flex justify-between items-center h-[80px] px-6`}
+      className={`fixed top-0 left-0 z-50 w-full  flex justify-between items-center h-[80px] px-6`}
     >
       <div className="flex flex-col gap-2">
         {isArticle ? (
@@ -19,7 +19,7 @@ export default function Header({ isArticle = false }: HeaderProps) {
             variant="ghost"
             className="text-zinc-800 px-5 py-3 rounded-xl"
           >
-            <Link href="/article" className="flex items-center gap-2">
+            <Link href="/blog" className="flex items-center gap-2">
               <ChevronLeft className="w-5 h-5" />
               返回文章列表
             </Link>

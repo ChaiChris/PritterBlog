@@ -69,12 +69,13 @@ import { useScrolling } from "@/hooks/use-scrolling";
 // import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
 
 // --- Lib ---
-import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import { MAX_FILE_SIZE } from "@/lib/tiptap-utils";
+import { handleImageUpload } from "./image-upload";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
 
-import content from "@/components/tiptap-templates/simple/data/content.json";
+// import content from "@/components/tiptap-templates/simple/data/content.json";
 
 const MainToolbarContent = ({
   onHighlighterClick,
@@ -124,10 +125,10 @@ const MainToolbarContent = ({
 
       <ToolbarSeparator />
 
-      <ToolbarGroup>
+      {/* <ToolbarGroup>
         <MarkButton type="superscript" />
         <MarkButton type="subscript" />
-      </ToolbarGroup>
+      </ToolbarGroup> */}
 
       <ToolbarSeparator />
 
@@ -180,7 +181,16 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor() {
+const SERVER_URL =
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+
+export function SimpleEditor({
+  htmlValue,
+  onChange,
+}: {
+  htmlValue?: string;
+  onChange?: (value: string) => void;
+}) {
   const isMobile = useIsMobile();
   const windowSize = useWindowSize();
   const [mobileView, setMobileView] = React.useState<
@@ -189,6 +199,14 @@ export function SimpleEditor() {
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
+    // react hook form
+    content: htmlValue ?? "<p>請輸入內容...</p>",
+    onUpdate: ({ editor }) => {
+      if (typeof onChange === "function") {
+        onChange(editor.getHTML());
+      }
+    },
+
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
     editorProps: {
@@ -213,21 +231,32 @@ export function SimpleEditor() {
       TaskList,
       TaskItem.configure({ nested: true }),
       Highlight.configure({ multicolor: true }),
-      Image,
       Typography,
       Superscript,
       Subscript,
       Selection,
+      Image.extend({
+        renderHTML({ node, HTMLAttributes }) {
+          const src = node.attrs.src;
+          const fullSrc = src.startsWith("http") ? src : `${SERVER_URL}${src}`;
+          return ["img", { ...HTMLAttributes, src: fullSrc }];
+        },
+      }),
       ImageUploadNode.configure({
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
-        limit: 3,
+        limit: 5,
         upload: handleImageUpload,
-        onError: (error) => console.error("Upload failed:", error),
+        onError: (error) => console.error("Upload failed:", error.message),
       }),
     ],
-    content,
   });
+
+  React.useEffect(() => {
+    if (editor && htmlValue !== editor.getHTML()) {
+      editor.commands.setContent(htmlValue ?? "");
+    }
+  }, [htmlValue, editor]);
 
   const isScrolling = useScrolling();
   const rect = useCursorVisibility({

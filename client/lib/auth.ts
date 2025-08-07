@@ -2,7 +2,7 @@ import { LoginInput, RegisterInput } from "@/types/auth";
 import axios from "axios";
 
 const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8080";
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
 
 //axios 實例
 export const axiosUserInstance = axios.create({
@@ -13,9 +13,9 @@ export const axiosUserInstance = axios.create({
   },
 });
 
-export const fetcher: <T = any>(url: string) => Promise<T> = async (
+export const fetcher = async <T extends object = object>(
   url: string
-) => {
+): Promise<T> => {
   const res = await axiosUserInstance.get<T>(url);
   return res.data;
 };
@@ -41,11 +41,14 @@ export async function registerUser(input: RegisterInput) {
       console.error("registerUser: ERROR 註冊失敗", res.data);
       throw new Error("註冊失敗，請稍後再試");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("registerUser error", error);
-    throw new Error(
-      error?.response?.data?.message || "註冊時發生錯誤，請稍後再試"
-    );
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "註冊時發生錯誤，請稍後再試"
+      );
+    }
+    throw error;
   }
 }
 
@@ -69,9 +72,12 @@ export async function loginUser(input: LoginInput) {
       console.error("loginUser: ERROR 登入失敗", res.data);
       throw new Error("登入失敗，請稍後再試");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("loginUser: ERROR 登入失敗", error);
-    throw new Error(error?.response?.data?.message || "登入失敗，請稍後再試");
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "登入失敗，請稍後再試");
+    }
+    throw error;
   }
 }
 
@@ -88,9 +94,14 @@ export async function logoutUser() {
       console.error("logoutUser: 非 200 回應", res.status, res.data);
       throw new Error("登出失敗，請稍後再試");
     }
-  } catch (err: any) {
-    console.error("logoutUser: ERROR", err?.response?.data || err.message);
-    throw new Error("登出失敗，請檢查網路或稍後再試");
+  } catch (error: unknown) {
+    console.error("logoutUser: ERROR", error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "登出失敗，請檢查網路或稍後再試"
+      );
+    }
+    throw error;
   }
 }
 

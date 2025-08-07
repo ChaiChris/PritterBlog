@@ -3,9 +3,15 @@ import SearchBlock from "@/app/blog/_components/navigation-bar/_components/searc
 import { getCategoriesList } from "@/lib/category";
 
 export default async function NavigationBar() {
-  const categories = await getCategoriesList();
+  let categories = [];
+
+  try {
+    categories = await getCategoriesList();
+  } catch (error) {
+    console.error("取得主題列表失敗:", error);
+  }
   return (
-    <div className="w-full flex justify-between items-center py-[16px]">
+    <div className="w-full max-w-[1280px] flex justify-between items-center py-[16px]">
       <ThemePicker themes={categories} />
       <SearchBlock />
     </div>

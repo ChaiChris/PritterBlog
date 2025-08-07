@@ -1,4 +1,4 @@
-import { WelcomeAni } from "./_components/welcome-ani/welcome-ani";
+import WelcomeAni from "./_components/welcome-ani/welcome-ani";
 
 export default function AdminPage() {
   return (

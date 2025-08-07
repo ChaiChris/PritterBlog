@@ -5,6 +5,9 @@ services:
     ports:
       - "8081:8081"
       - "5555:5555"
+    volumes:
+      - ./server:/server # 掛載整個專案，包含 uploads 資料夾
+      - /server/node_modules # 避免主機蓋掉 container 的 node_modules
     env_file:
       - ./server/.env
     depends_on:
