@@ -17,15 +17,15 @@ export default function Header({ isArticle = false }: HeaderProps) {
           <Button
             asChild
             variant="ghost"
-            className="text-zinc-800 px-5 py-3 rounded-xl"
+            className="text-zinc-800 px-5 py-3 rounded-xl bg-gray-50/60 backdrop-blur-lg"
           >
-            <Link href="/blog" className="flex items-center gap-2">
+            <Link href="/blog" className="flex items-center gap-2 ">
               <ChevronLeft className="w-5 h-5" />
               返回文章列表
             </Link>
           </Button>
         ) : (
-          <div className="text-lg text-zinc-800 font-semibold">
+          <div className="text-lg text-zinc-800 font-semibold rounded-xl bg-gray-50/70">
             Pritter Blog
           </div>
         )}

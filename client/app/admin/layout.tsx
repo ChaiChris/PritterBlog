@@ -1,4 +1,3 @@
-// components/layout/DashboardLayout.tsx
 import React from "react";
 import HeaderAdmin from "./_components/header-admin/header-admin";
 import NavigationBarAdmin from "./_components/navigation-bar/navigation-bar";

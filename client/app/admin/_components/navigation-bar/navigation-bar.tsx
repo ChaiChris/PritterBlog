@@ -1,4 +1,4 @@
-import AdminMenu from "./_components/theme-picker/theme-picker";
+import AdminMenu from "./_components/theme-picker/admin-menu";
 
 export default function NavigationBarAdmin() {
   return (

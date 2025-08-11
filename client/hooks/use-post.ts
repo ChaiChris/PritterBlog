@@ -1,6 +1,6 @@
 "use client";
 import { PostCard } from "@/types/post";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import sanitize from "sanitize-html";
 import useSWR from "swr";
 
@@ -170,16 +170,14 @@ export const usePosts = (params: UsePostsParams = {}): usePostsReturn => {
     total: data?.total || 0,
     totalPages,
     currentPage,
-
     // 狀態
     isLoading,
     error,
 
-    // 操作函數
     handlePostsPageChange,
     refreshPosts,
 
-    // 分頁輔助
+    // 分頁
     pageButtonGenerator,
     canGoPrevious: currentPage > 1,
     canGoNext: currentPage < totalPages,

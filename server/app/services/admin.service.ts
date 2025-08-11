@@ -3,6 +3,7 @@ import { client as prisma } from "../prisma/client.js";
 interface CreatePostData {
   title: string;
   body: string;
+  bodyJson: any;
   categoryId: number;
   userId: number;
   coverImagePath: string;
@@ -21,6 +22,7 @@ export class PostAdminService {
       data: {
         title: data.title,
         body: data.body,
+        bodyJson: data.bodyJson,
         categoryId: data.categoryId,
         userId: data.userId,
         coverImagePath: data.coverImagePath,

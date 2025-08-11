@@ -44,6 +44,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PostPagination from "@/app/blog/_components/post-pagination/post-pagination";
 import Image from "next/image";
 import { format } from "date-fns";
+import Link from "next/link";
+import DeleteHandler from "./_components/delete-handler/delete-handler";
 
 interface PostListProps {
   id: number;
@@ -63,13 +65,15 @@ export default function AdminPostList() {
   const [debouncedTitle, setDebouncedTitle] = useState("");
   const [pageSize, setPageSize] = useState(10);
   const [mounted, setMounted] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  // 確保組件已掛載
+  // 確保已掛載
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // 自定義 debounce hook，避免 SSR 問題
+  // debounce for SSR
   const useDebounce = (value: string, delay: number) => {
     const [debouncedValue, setDebouncedValue] = useState(value);
 
@@ -86,17 +90,14 @@ export default function AdminPostList() {
     return debouncedValue;
   };
 
-  // 使用自定義 debounce hook
   const debouncedSearchValue = useDebounce(titleFilter, 300);
 
-  // 當 debounced 值改變時更新搜尋
   useEffect(() => {
     if (mounted) {
       setDebouncedTitle(debouncedSearchValue);
     }
   }, [debouncedSearchValue, mounted]);
 
-  // 使用你的自定義 hook
   const postsData = usePosts({
     limit: pageSize,
     title: debouncedTitle,
@@ -118,10 +119,9 @@ export default function AdminPostList() {
 
   const columnHelper = createColumnHelper<PostListProps>();
 
-  // 定義列配置
+  // 列配置
   const columns = useMemo(
     () => [
-      // ID 列 - 使用 accessorKey
       columnHelper.accessor("id", {
         header: "ID",
         size: 60,
@@ -152,7 +152,6 @@ export default function AdminPostList() {
           );
         },
       }),
-      // 標題列 - 使用 accessorKey，帶排序功能
       columnHelper.accessor("title", {
         header: ({ column }) => (
           <Button
@@ -174,7 +173,7 @@ export default function AdminPostList() {
         cell: (info) => {
           const user = info.row.original.user;
           const avatarUrl = user?.avatarPath
-            ? `https://github.com/${user.avatarPath}`
+            ? `https://github.com/${user.avatarPath}` // TODO:本地實作
             : undefined;
 
           return (
@@ -201,7 +200,6 @@ export default function AdminPostList() {
           </Button>
         ),
         cell: ({ getValue }) => {
-          // 增加錯誤處理，避免無效日期
           const dateValue = getValue();
           try {
             return (
@@ -210,6 +208,7 @@ export default function AdminPostList() {
               </div>
             );
           } catch (error) {
+            console.log("[ AdminPostList ]: ", error);
             return (
               <div className="text-sm text-muted-foreground">無效日期</div>
             );
@@ -228,12 +227,14 @@ export default function AdminPostList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleEdit(row.original.id)}>
-                <Edit className="mr-2 h-4 w-4" />
-                編輯
+              <DropdownMenuItem asChild>
+                <Link href={`/admin/${row.original.id}/edit`}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  編輯
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
-                // onClick={() => handleDelete(row.original.id)}
+                onClick={() => openDeleteDialog(row.original.id)}
                 className="text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -247,16 +248,10 @@ export default function AdminPostList() {
     [columnHelper]
   );
 
-  // 使用 useCallback 來優化函數
-  const handleEdit = useCallback((id: number) => {
-    alert(`編輯文章 ID: ${id}`);
-    // 編輯
-  }, []);
-
   const handlePageSizeChange = useCallback(
     (newPageSize: number) => {
       setPageSize(newPageSize);
-      handlePostsPageChange(1); // 改變頁面大小時回到第一頁
+      handlePostsPageChange(1); // 變動時時回到第一頁
     },
     [handlePostsPageChange]
   );
@@ -269,10 +264,19 @@ export default function AdminPostList() {
     [handlePostsPageChange]
   );
 
-  // 注意：這裡我們不使用 React Table 的內建分頁功能
-  // 而是使用你的自定義分頁邏輯
+  function openDeleteDialog(id: number) {
+    setDeleteId(id);
+    setDeleteDialogOpen(true);
+  }
+
+  function handleDeleted() {
+    // 刪除完更新列表
+    refreshPosts();
+  }
+
+  // 分頁
   const table = useReactTable({
-    data: posts || [], // 確保 posts 不為空
+    data: posts || [],
     columns,
     state: {
       sorting,
@@ -286,22 +290,11 @@ export default function AdminPostList() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    // 分頁由後端處理，並使用自訂Shadcn元件
     manualPagination: true,
     pageCount: totalPages || 0,
   });
 
-  // 如果還沒掛載，顯示載入狀態
-  if (!mounted) {
-    return (
-      <div className="p-6 max-w-6xl mx-auto text-center text-muted-foreground">
-        <RefreshCw className="animate-spin mx-auto mb-2" />
-        初始化中...
-      </div>
-    );
-  }
-
-  if (isLoading) {
+  if (isLoading || !mounted) {
     return (
       <div className="p-6 max-w-6xl mx-auto text-center text-muted-foreground">
         <RefreshCw className="animate-spin mx-auto mb-2" />
@@ -403,6 +396,14 @@ export default function AdminPostList() {
         pageButtonGenerator={pageButtonGenerator}
         canGoPrevious={canGoPrevious}
         canGoNext={canGoNext}
+      />
+      <DeleteHandler
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        targetId={deleteId}
+        onDeleted={() => {
+          refreshPosts();
+        }}
       />
     </div>
   );

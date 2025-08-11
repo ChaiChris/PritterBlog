@@ -20,6 +20,7 @@ export interface GetSinglePostTypes {
   id: number;
   title: string;
   body: string;
+  bodyJson: Record<string, unknown>;
   coverImagePath: string;
   updatedAt: string;
   user?: {

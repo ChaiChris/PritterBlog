@@ -66,7 +66,7 @@ export const getPosts = async ({
 
 export const getSinglePost = async ({ id }: GetSinglePostTypes) => {
   const post = await prisma.post.findUnique({
-    where: { id },
+    where: { id: id },
     include: {
       user: true,
     },
@@ -82,18 +82,20 @@ export const getSinglePost = async ({ id }: GetSinglePostTypes) => {
 interface CreatePostInput {
   title: string;
   body: string;
+  bodyJson: any;
   categoryId: number;
   userId: number;
   coverImagePath?: string | null;
 }
 
 export async function createPostService(input: CreatePostInput) {
-  const { title, body, categoryId, userId, coverImagePath } = input;
+  const { title, body, bodyJson, categoryId, userId, coverImagePath } = input;
 
   const newPost = await prisma.post.create({
     data: {
       title,
       body,
+      bodyJson,
       categoryId,
       userId,
       coverImagePath: coverImagePath || null,
@@ -102,6 +104,26 @@ export async function createPostService(input: CreatePostInput) {
 
   return newPost;
 }
+
+export async function editPostService(id: number, input: CreatePostInput) {
+  console.log("[ EditPostService ]：觸發");
+  const { title, body, bodyJson, categoryId, userId, coverImagePath } = input;
+
+  const editedPost = await prisma.post.update({
+    where: { id },
+    data: {
+      title,
+      body,
+      bodyJson,
+      categoryId,
+      userId,
+      coverImagePath: coverImagePath || null,
+    },
+  });
+
+  return editedPost;
+}
+
 interface GetPostsCountParams {
   categoryId?: number;
   status?: string;

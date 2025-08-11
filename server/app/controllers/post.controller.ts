@@ -10,8 +10,17 @@ import {
   ArticleStatusFilter,
 } from "../types/post.type.js";
 import { logger } from "../logger.js";
+import transPicUrlToLocalDir from "../utils/transPicUrlToLocalDir.js";
+
 const postAdminService = new PostAdminService();
 
+// GET /posts - 獲取文章列表
+// 支援的查詢參數:
+// - limit: 限制返回數量 (預設: 10)
+// - skip: 跳過數量 (預設: 0)
+// - author: 作者篩選 (可選)
+// - title: 標題篩選 (可選)
+// - status: 狀態篩選 (ALL, PUBLISHED, UNPUBLISHED, DELETED) (可選)
 export const getPostsController = async (req: Request, res: Response) => {
   try {
     const { limit, skip, categoryId, author, title, status } = req.query;
@@ -40,7 +49,7 @@ export const getPostsController = async (req: Request, res: Response) => {
       }),
     ]);
     console.log("[getPostsController] total:", total);
-    // 計算分頁資訊
+    // 分頁
     const totalPages = Math.max(
       1,
       Math.ceil(Number(total) / Number(query.limit))
@@ -51,7 +60,7 @@ export const getPostsController = async (req: Request, res: Response) => {
       Number(query.skip) / Number(query.limit) + 1
     );
 
-    // 返回包含分頁資訊的回應
+    // 返傳包含分頁
     res.json({
       posts,
       total,
@@ -67,13 +76,14 @@ export const getPostsController = async (req: Request, res: Response) => {
 };
 
 export const getSinglePostController = async (req: Request, res: Response) => {
-  const { id } = req.query;
-  const query: GetSinglePostTypes = {
+  const { id } = req.params;
+  if (!id) return res.status(404).json({ error: "缺少id" });
+  const params: GetSinglePostTypes = {
     id: Number(id),
   };
 
   try {
-    const post = await postService.getSinglePost(query);
+    const post = await postService.getSinglePost(params);
     logger.info("getSinglePostController: GetSinglePost Successfully");
     res.status(200).json(post);
   } catch (err: any) {
@@ -85,6 +95,7 @@ export const getSinglePostController = async (req: Request, res: Response) => {
 interface CreatePostInput {
   title: string;
   body: string;
+  bodyJson: any;
   categoryId: number;
   userId: number;
   coverImagePath?: string | null;
@@ -96,10 +107,11 @@ export const setNewPostContentController = async (
 ) => {
   try {
     logger.info("[setNewPostContentController] ==> 開始");
+    const { title, body, bodyJson, categoryId, coverImagePath } = req.body;
+    console.log("bodyJson:", bodyJson);
+    console.log("body:", body);
 
-    const { title, body, categoryId, coverImagePath } = req.body;
-
-    if (!title || !body || !categoryId || !coverImagePath) {
+    if (!title || !body || !bodyJson || !categoryId || !coverImagePath) {
       logger.error("[setNewPostContentController] 缺少欄位資料");
       return res.status(400).json({ message: "缺少文章資料" });
     }
@@ -114,6 +126,7 @@ export const setNewPostContentController = async (
     const newPost = await postService.createPostService({
       title,
       body,
+      bodyJson,
       categoryId: Number(categoryId),
       userId: Number(userId),
       coverImagePath,
@@ -125,20 +138,69 @@ export const setNewPostContentController = async (
   }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const setEditPostContentController = async (
+  req: Request,
+  res: Response
+) => {
   try {
+    logger.info("[setEditPostContentController] ==> 開始");
     const { id } = req.params;
-    const post = await postService.getSinglePost({ id: parseInt(id) });
-    if (!post) {
-      logger.warn("deletePostController: Post ID is not found");
-      return res.status(404).json({ error: "Post ID is not found" });
+    const postId = Number(id);
+    logger.debug("[setEditPostContentController] postId:", postId);
+    const { title, body, bodyJson, categoryId, coverImagePath } = req.body;
+    logger.debug("[setEditPostContentController] bodyJson:", bodyJson);
+    logger.debug("[setEditPostContentController] body:", body);
+
+    if (!postId) {
+      logger.error("[setEditPostContentController] 缺少ID");
+      return res.status(400).json({ message: "缺少ID" });
     }
-    await postAdminService.deletePost(parseInt(id));
+
+    if (!title || !body || !bodyJson || !categoryId || !coverImagePath) {
+      logger.error("[setEditPostContentController] 缺少欄位資料");
+      return res.status(400).json({ message: "缺少文章資料" });
+    }
+
+    const userId = req.user?.userId;
+    if (!userId) {
+      logger.error(
+        "[setEditPostContentController] 缺少 userId，需檢查 auth 中介層"
+      );
+      return res.status(401).json({ message: "授權失敗" });
+    }
+
+    const editedPost = await postService.editPostService(postId, {
+      title,
+      body,
+      bodyJson,
+      categoryId: Number(categoryId),
+      userId: Number(userId),
+      coverImagePath,
+    });
+
+    return res.status(200).json({ message: "文章修改成功", data: editedPost });
+  } catch (err) {
+    logger.error("[setEditPostContentController] 修改文章失敗:", err);
+    return res.status(500).json({ message: "修改文章失敗", err });
+  }
+};
+
+export const deletePostController = async (req: Request, res: Response) => {
+  try {
+    logger.info("[ deletePostController ] 觸發");
+    const { id } = req.params;
+    const postId = Number(id);
+    const post = await postService.getSinglePost({ id: postId });
+    if (!post) {
+      logger.warn("deletePostController: Post is not found id ", postId);
+      return res.status(404).json({ error: "Post is not found" });
+    }
+    await postAdminService.deletePost(postId);
     if (post.coverImagePath) {
       try {
-        const filePath = path.join(__dirname, "..", post.coverImagePath);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
+        const localPicPath = transPicUrlToLocalDir(post.coverImagePath);
+        if (localPicPath) {
+          fs.unlinkSync(localPicPath);
         }
       } catch (err) {
         logger.error("deletePost: 刪除封面檔案錯誤:", err);
@@ -155,13 +217,13 @@ export const deletePost = async (req: Request, res: Response) => {
   }
 };
 
-async function deleteOldCoverImage(coverImagePath: string) {
+export async function deleteImageController(coverImageUrl: string) {
   try {
-    const filePath = path.join(__dirname, "..", coverImagePath);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    const localPicPath = transPicUrlToLocalDir(coverImageUrl);
+    if (localPicPath) {
+      fs.unlinkSync(localPicPath);
     }
   } catch (error) {
-    console.error("刪除舊封面錯誤:", error);
+    console.error("刪除錯誤:", error);
   }
 }

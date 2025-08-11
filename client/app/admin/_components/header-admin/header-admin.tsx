@@ -1,4 +1,3 @@
-"use Client";
 import UserPanelAdmin from "./user-panel-admin/user-panel-admin";
 // ${isArticle ? "backdrop-blur-lg" : ""}
 export default function HeaderAdmin() {

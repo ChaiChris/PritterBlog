@@ -29,3 +29,31 @@ export const authMiddleware = async (
     return res.status(401).json({ message: "token 無效" });
   }
 };
+
+export const optionAuthMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  logger.info("optionAuthMiddleware 驗證觸發");
+  const token = req.cookies?.token;
+
+  if (!token) {
+    logger.info("optionAuthMiddleware 無授權(匿名)");
+    return next();
+  }
+
+  try {
+    const payload = await verifyToken(token);
+    if (!payload) {
+      logger.info("optionAuthMiddleware 禁止訪問");
+      return res.status(403).json({ message: "禁止訪問" });
+    }
+    req.user = { userId: payload.id, ...payload };
+    logger.info("optionAuthMiddleware 授權成功");
+    return next();
+  } catch (err) {
+    logger.error("optionAuthMiddleware token 驗證錯誤", err);
+    return res.status(401).json({ message: "token 無效" });
+  }
+};
