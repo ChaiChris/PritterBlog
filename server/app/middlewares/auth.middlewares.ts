@@ -35,22 +35,24 @@ export const optionAuthMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  logger.info("optionAuthMiddleware 驗證觸發");
+  logger.info("[ optionAuthMiddleware ] 開始驗證");
   const token = req.cookies?.token;
 
   if (!token) {
-    logger.info("optionAuthMiddleware 無授權(匿名)");
+    logger.info("[ optionAuthMiddleware ] 未登入通過");
     return next();
   }
 
   try {
     const payload = await verifyToken(token);
     if (!payload) {
-      logger.info("optionAuthMiddleware 禁止訪問");
+      logger.info("optionAuthMiddleware token異常");
       return res.status(403).json({ message: "禁止訪問" });
     }
     req.user = { userId: payload.id, ...payload };
-    logger.info("optionAuthMiddleware 授權成功");
+    // console.log("optionAuthMiddleware 登入通過");
+    // console.log("optionAuthMiddleware payload:", payload);
+    // console.log("optionAuthMiddleware user:", req.user);
     return next();
   } catch (err) {
     logger.error("optionAuthMiddleware token 驗證錯誤", err);

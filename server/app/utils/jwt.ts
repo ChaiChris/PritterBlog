@@ -36,18 +36,17 @@ export async function verifyToken(token: string): Promise<TokenPayload> {
   console.log("Token 類型:", typeof token);
   console.log("Token 長度:", token?.length);
   try {
-    // 先檢查 token 格式，再進行驗證
+    // 先檢查 token，再進行驗證
     if (!token || typeof token !== "string" || token.trim() === "") {
       throw new Error("Token 格式錯誤：必須是非空字串");
     }
-
-    // 檢查 JWT 基本格式 (應該有兩個點分隔三個部分)
     const parts = token.split(".");
     if (parts.length !== 3) {
       throw new Error("Token 格式錯誤：不是有效的 JWT 格式");
     }
 
     const { payload } = await jwtVerify(token, SECRET_KEY);
+    console.log("[JWT] payload: ", payload);
     return payload as TokenPayload;
   } catch (err) {
     console.error("驗證 token 失敗:", err);

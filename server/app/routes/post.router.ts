@@ -19,6 +19,7 @@ import {
 import {
   getCommentsController,
   setNewCommentContentController,
+  deleteCommentController,
 } from "../controllers/comment.controller.js";
 
 const app = Router();
@@ -49,7 +50,7 @@ app.post(
 
 // app.delete("/uploads/post/cover", authMiddleware, deleteCoverImageController);
 
-app.get("/post/:id/comments", getCommentsController);
+app.get("/post/:id/comments", optionAuthMiddleware, getCommentsController);
 
 app.post(
   "/uploads/comment/:id",
@@ -57,14 +58,6 @@ app.post(
   setNewCommentContentController
 );
 
-// router.put('/:commentId',
-//   authMiddleware,
-//   commentController.updateCommentController
-// );
-
-// router.delete('/:commentId',
-//   authMiddleware,
-//   commentController.deleteCommentController
-// );
+app.delete("/comment/:id", authMiddleware, deleteCommentController);
 
 export default app;

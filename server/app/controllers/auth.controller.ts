@@ -29,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
   }
 
   //產生 JWT
-  const token = await jwtService.signToken({ id: user.id });
+  const token = await jwtService.signToken({ id: user.id, role: user.role });
 
   //把 token 存在 cookie 裡
   res.cookie("token", token, {

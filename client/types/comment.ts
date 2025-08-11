@@ -13,6 +13,7 @@ export interface Comment {
   createdAt: string;
   updatedAt: string;
   user: User | null;
+  isAuthor: boolean;
 }
 
 export interface CommentResponse {

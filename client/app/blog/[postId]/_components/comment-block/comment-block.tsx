@@ -4,6 +4,8 @@ import CommentAddForm from "./_components/comment-add-form/comment-add-form";
 import CommentItem from "./_components/comment-item/comment-item";
 import { useCommentsInfinite } from "@/hooks/use-comment";
 import { mutate } from "swr";
+import axios from "axios";
+import { toast } from "sonner";
 
 interface CommentBlockProps {
   postId: number;
@@ -25,7 +27,22 @@ export default function CommentBlock({
     isLoadingMore,
     isEnd,
     loadMore,
+    setSize,
   } = useCommentsInfinite(Number(postId), initialComments);
+
+  async function handleCommentDelete(id: number) {
+    try {
+      await axios.delete(`${SERVER_URL}/api/blog/comment/${id}`, {
+        withCredentials: true,
+      });
+      toast.success("刪除成功！");
+      setSize(1);
+    } catch (err) {
+      // console.error(err);
+      toast.error("刪除失敗，請稍後再試");
+    }
+  }
+
   if (isLoadingInitialData) return <p>載入中…</p>;
 
   console.log(comments);
@@ -37,11 +54,12 @@ export default function CommentBlock({
           postId={Number(postId)}
           onSuccess={async () => {
             console.log("Comment added, updating comments...");
-            await mutate(
-              (key) =>
-                typeof key === "string" &&
-                key.startsWith(`${SERVER_URL}/api/blog/post/${postId}/comments`)
-            );
+            // await mutate(
+            //   (key) =>
+            //     typeof key === "string" &&
+            //     key.startsWith(`${SERVER_URL}/api/blog/post/${postId}/comments`)
+            // );
+            setSize(1);
           }}
         />
       </div>
@@ -52,9 +70,13 @@ export default function CommentBlock({
           <p className="text-gray-500">目前沒有留言</p>
         )}
         {comments.filter(Boolean).map((comment) => (
-          <CommentItem key={comment.id} comment={comment} />
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            onDelete={handleCommentDelete}
+          />
         ))}
-        {isLoadingMore && <p>正在載入更多留言...</p>}
+        {/* {isLoadingMore && <p>正在載入更多留言...</p>} */}
         {!isEnd && !isLoadingMore && (
           <button
             onClick={loadMore}

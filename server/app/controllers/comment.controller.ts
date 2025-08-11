@@ -7,6 +7,10 @@ const postAdminService = new PostAdminService();
 export const getCommentsController = async (req: Request, res: Response) => {
   try {
     const postId = Number(req.params.id);
+    const user = req.user;
+    console.log("[ getCommentsController ] user: ", user);
+    const userId = Number(req.user?.userId);
+    console.log("[ getCommentsController ] userId: ", userId);
     if (isNaN(postId) || postId <= 0) {
       return res.status(400).send("無效的文章 ID");
     }
@@ -23,12 +27,14 @@ export const getCommentsController = async (req: Request, res: Response) => {
       postId,
       limit,
       cursor,
+      userId,
     });
 
     const result = await commentService.getCommentsService(
       postId,
       limit,
-      cursor
+      cursor,
+      userId
     );
 
     res.status(200).json(result);
@@ -79,17 +85,40 @@ export const setNewCommentContentController = async (
   }
 };
 
-// export const deleteCommentController = async (req: Request, res: Response) => {
-//   try {
-//     const { id } = req.params;
-//     const postId = Number(id);
-//     const commentDelete = await commentService.deleteComment({ postId });
-//     res.json({
-//       success: true,
-//       message: "文章刪除成功",
-//     });
-//   } catch (err) {
-//     logger.error("deletePost: 刪除文章錯誤 ", err);
-//     res.status(500).json({ error: "刪除文章錯誤" });
-//   }
-// };
+export const deleteCommentController = async (req: Request, res: Response) => {
+  try {
+    logger.info("[deleteCommentController] 觸發");
+    const commentId = Number(req.params.id);
+    const userId = req.user?.id;
+    const userRole = req.user?.role;
+
+    if (!userId) {
+      logger.warn("[deleteCommentController] 未授權");
+      return res.status(401).json({ error: "未授權" });
+    }
+    if (isNaN(commentId) || commentId <= 0) {
+      logger.warn("[deleteCommentController] 無效的留言ID");
+      return res.status(400).json({ error: "無效的留言ID" });
+    }
+    // 驗證留言者，僅留言人及管理員可以刪除留言
+    const comment = await commentService.getSingleCommentService(commentId);
+    if (!comment) {
+      logger.warn("[deleteCommentController] 留言不存在");
+      return res.status(404).json({ error: "留言不存在" });
+    }
+    if (userRole !== "ADMIN") {
+      if (comment.userId !== userId) {
+        logger.error("[deleteCommentController] 非法觸發");
+        return res.status(403).json({ error: "非法觸發" });
+      }
+    }
+    await commentService.deleteCommentService(commentId);
+    res.status(200).json({
+      success: true,
+      message: "留言刪除成功",
+    });
+  } catch (err) {
+    logger.error("[ deleteCommentController ]: 留言刪除失敗 ", err);
+    res.status(500).json({ error: "留言刪除失敗" });
+  }
+};

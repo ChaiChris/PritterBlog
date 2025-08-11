@@ -8,11 +8,13 @@ import {
   CreateCommentInput,
   CommentStatus,
 } from "../types/comment.type.js";
+import { logger } from "../logger.js";
 
 export const getCommentsService = async (
   postId: number,
   limit: number,
-  cursor?: string
+  cursor?: string,
+  authorId?: number
 ): Promise<getCommentsResponse> => {
   const baseWhere: any = {
     postId: postId,
@@ -78,6 +80,7 @@ export const getCommentsService = async (
           avatarPath: c.user.avatarPath,
         }
       : null,
+    isAuthor: authorId ? c.userId === authorId : false,
   }));
 
   return {
@@ -103,4 +106,28 @@ export async function createCommentService(input: CreateCommentInput) {
 
   const newComment = await prisma.comment.create({ data });
   return newComment;
+}
+
+export async function deleteCommentService(postId: number) {
+  return await prisma.comment.delete({
+    where: { id: postId },
+  });
+}
+
+export async function getSingleCommentService(commentId: number) {
+  try {
+    return await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: {
+        id: true,
+        userId: true,
+        body: true,
+        postId: true,
+        createdAt: true,
+      },
+    });
+  } catch (err) {
+    logger.error("[commentService.getCommentById] 查詢失敗", err);
+    throw new Error("查詢留言失敗");
+  }
 }

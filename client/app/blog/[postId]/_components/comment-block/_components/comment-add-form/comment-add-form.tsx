@@ -37,6 +37,7 @@ export default function CommentAddForm({ postId, onSuccess }: CommentAddForm) {
       <div className="grid gap-2">
         <Textarea
           placeholder="發表留言..."
+          value={commentBody}
           className="resize-none rounded-sm border border-input p-3 text-sm shadow-sm"
           onChange={(e) => setCommentBody(e.target.value)}
           disabled={loading}

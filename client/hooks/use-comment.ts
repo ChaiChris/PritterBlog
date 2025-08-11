@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import useSWRInfinite from "swr/infinite";
 import { CommentResponse } from "@/types/comment";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) =>
+  fetch(url, { credentials: "include" }).then((res) => res.json());
 
 export function useCommentsInfinite(
   postId: number,
@@ -69,5 +70,6 @@ export function useCommentsInfinite(
     isEnd,
     loadMore: () => setSize((prev) => prev + 1),
     rawPages: data,
+    setSize,
   };
 }
