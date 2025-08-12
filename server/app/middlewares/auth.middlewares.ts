@@ -1,4 +1,16 @@
 import { NextFunction, Request, Response } from "express";
+
+declare module "express" {
+  interface Request {
+    user?: {
+      [key: string]: any;
+      userId: number;
+      role?: "ADMIN" | "USER" | undefined | string;
+      email?: string | undefined;
+    };
+  }
+}
+
 import { verifyToken } from "../utils/jwt.js";
 import { logger } from "../logger.js";
 

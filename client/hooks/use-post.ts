@@ -41,7 +41,7 @@ const SERVER_URL =
   process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
 
 const fetcher = async (url: string): Promise<PostsResponse> => {
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error("文章列表獲取失敗");
   return response.json();
 };
@@ -103,6 +103,7 @@ export const usePosts = (params: UsePostsParams = {}): usePostsReturn => {
     url,
     fetcher,
     {
+      fallbackData: initialData,
       revalidateOnMount: currentPage === 1 && !initialData,
       revalidateOnFocus: false,
       revalidateOnReconnect: true,
@@ -159,7 +160,7 @@ export const usePosts = (params: UsePostsParams = {}): usePostsReturn => {
   const totalPages = data?.totalPages || 0;
 
   const posts =
-    data?.posts.map((p) => ({
+    (data?.posts ?? []).map((p) => ({
       ...p,
       bodyText: htmlToText(p.body || ""),
     })) || [];

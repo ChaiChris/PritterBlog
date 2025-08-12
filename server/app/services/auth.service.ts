@@ -75,7 +75,7 @@ export const checkUserEmailService = async (input: CheckUserEmail) => {
 export const getProfileService = async (token: string) => {
   const payload = await jwtService.verifyToken(token);
 
-  if (!payload || typeof payload !== "object" || !("id" in payload)) {
+  if (!payload || typeof payload !== "object" || !("id" in payload) || !("role" in payload)) {
     throw new Error("無效的 token");
   }
 
@@ -87,3 +87,4 @@ export const getProfileService = async (token: string) => {
   const { password, ...userInfo } = user;
   return userInfo;
 };
+

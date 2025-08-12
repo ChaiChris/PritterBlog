@@ -74,6 +74,10 @@ import { handleImageUpload } from "./image-upload";
 
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
+// import { TiptapDocument } from "@/app/admin/_components/post-form/post-form";
+import type { JSONContent } from "@tiptap/core";
+
+export type TiptapDocument = JSONContent;
 
 // import content from "@/components/tiptap-templates/simple/data/content.json";
 
@@ -104,7 +108,6 @@ const MainToolbarContent = ({
           portal={isMobile}
         />
         <BlockquoteButton />
-        <CodeBlockButton />
       </ToolbarGroup>
 
       <ToolbarSeparator />
@@ -113,7 +116,7 @@ const MainToolbarContent = ({
         <MarkButton type="bold" />
         <MarkButton type="italic" />
         <MarkButton type="strike" />
-        <MarkButton type="code" />
+        {/* <MarkButton type="code" /> */}
         <MarkButton type="underline" />
         {!isMobile ? (
           <ColorHighlightPopover />
@@ -142,7 +145,7 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <ImageUploadButton text="Add" />
+        <ImageUploadButton text="新增圖片" />
       </ToolbarGroup>
 
       <Spacer />
@@ -184,151 +187,14 @@ const MobileToolbarContent = ({
 const SERVER_URL =
   process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
 
-// export function SimpleEditor({
-//   htmlValue,
-//   jsonValue,
-//   onChange,
-// }: {
-//   htmlValue?: string;
-//   jsonValue?: any;
-//   onChange?: (data: { html: string; json: any }) => void;
-// }) {
-//   const isMobile = useIsMobile();
-//   const windowSize = useWindowSize();
-//   const [mobileView, setMobileView] = React.useState<
-//     "main" | "highlighter" | "link"
-//   >("main");
-//   const toolbarRef = React.useRef<HTMLDivElement>(null);
-
-//   const editor = useEditor({
-//     // react hook form
-//     content: jsonValue || htmlValue || "<p>請輸入內容...</p>",
-//     onUpdate: ({ editor }) => {
-//       if (typeof onChange === "function") {
-//         onChange({
-//           html: editor.getHTML(),
-//           json: editor.getJSON(),
-//         });
-//       }
-//     },
-
-//     immediatelyRender: false,
-//     shouldRerenderOnTransaction: false,
-//     editorProps: {
-//       attributes: {
-//         autocomplete: "off",
-//         autocorrect: "off",
-//         autocapitalize: "off",
-//         "aria-label": "Main content area, start typing to enter text.",
-//         class: "simple-editor",
-//       },
-//     },
-//     extensions: [
-//       StarterKit.configure({
-//         horizontalRule: false,
-//         link: {
-//           openOnClick: false,
-//           enableClickSelection: true,
-//         },
-//       }),
-//       HorizontalRule,
-//       TextAlign.configure({ types: ["heading", "paragraph"] }),
-//       TaskList,
-//       TaskItem.configure({ nested: true }),
-//       Highlight.configure({ multicolor: true }),
-//       Typography,
-//       Superscript,
-//       Subscript,
-//       Selection,
-//       Image.extend({
-//         renderHTML({ node, HTMLAttributes }) {
-//           const src = node.attrs.src;
-//           const fullSrc = src.startsWith("http") ? src : `${SERVER_URL}${src}`;
-//           return ["img", { ...HTMLAttributes, src: fullSrc }];
-//         },
-//       }),
-//       ImageUploadNode.configure({
-//         accept: "image/*",
-//         maxSize: MAX_FILE_SIZE,
-//         limit: 5,
-//         upload: handleImageUpload,
-//         onError: (error) => console.error("Upload failed:", error.message),
-//       }),
-//     ],
-//   });
-
-//   React.useEffect(() => {
-//     if (editor && !editor.isDestroyed) {
-//       if (jsonValue && Object.keys(jsonValue).length > 0) {
-//         if (JSON.stringify(editor.getJSON()) !== JSON.stringify(jsonValue)) {
-//           editor.commands.setContent(jsonValue);
-//         }
-//       } else if (htmlValue && htmlValue !== editor.getHTML()) {
-//         editor.commands.setContent(htmlValue);
-//       }
-//     }
-//   }, [htmlValue, jsonValue, editor]);
-
-//   const isScrolling = useScrolling();
-//   const rect = useCursorVisibility({
-//     editor,
-//     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-//   });
-
-//   React.useEffect(() => {
-//     if (!isMobile && mobileView !== "main") {
-//       setMobileView("main");
-//     }
-//   }, [isMobile, mobileView]);
-
-//   return (
-//     <div className="simple-editor-wrapper">
-//       <EditorContext.Provider value={{ editor }}>
-//         <Toolbar
-//           ref={toolbarRef}
-//           style={{
-//             ...(isScrolling && isMobile
-//               ? { opacity: 0, transition: "opacity 0.1s ease-in-out" }
-//               : {}),
-//             ...(isMobile
-//               ? {
-//                   bottom: `calc(100% - ${windowSize.height - rect.y}px)`,
-//                 }
-//               : {}),
-//           }}
-//         >
-//           {mobileView === "main" ? (
-//             <MainToolbarContent
-//               onHighlighterClick={() => setMobileView("highlighter")}
-//               onLinkClick={() => setMobileView("link")}
-//               isMobile={isMobile}
-//             />
-//           ) : (
-//             <MobileToolbarContent
-//               type={mobileView === "highlighter" ? "highlighter" : "link"}
-//               onBack={() => setMobileView("main")}
-//             />
-//           )}
-//         </Toolbar>
-
-//         <EditorContent
-//           editor={editor}
-//           role="presentation"
-//           className="simple-editor-content"
-//         />
-//       </EditorContext.Provider>
-//     </div>
-//   );
-// }
-
 export function SimpleEditor({
   htmlValue,
   jsonValue,
   onChange,
 }: {
   htmlValue?: string;
-  jsonValue?: any;
-  onChange?: (data: { html: string; json: any }) => void;
+  jsonValue?: JSONContent;
+  onChange?: (data: { html: string; json: JSONContent }) => void;
 }) {
   const isMobile = useIsMobile();
   const windowSize = useWindowSize();
@@ -375,7 +241,6 @@ export function SimpleEditor({
       },
     },
     extensions: [
-      // ...保持你原本的 extensions 配置不變...
       StarterKit.configure({
         horizontalRule: false,
         link: {

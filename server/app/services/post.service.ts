@@ -25,7 +25,7 @@ export const getPosts = async ({
   // 作者篩選
   if (author) {
     where.user = {
-      name: {
+      username: {
         contains: author,
         mode: "insensitive",
       },
@@ -137,9 +137,11 @@ export const getAllPostsCount = async (params: GetPostsCountParams = {}) => {
   if (categoryId !== undefined) conditions.categoryId = categoryId;
   if (status && status !== "ALL") conditions.status = status;
   if (author) {
-    conditions.author = {
-      contains: author,
-      mode: "insensitive",
+    conditions.user = {
+      username: {
+        contains: author,
+        mode: "insensitive",
+      },
     };
   }
   if (title) {

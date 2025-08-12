@@ -25,21 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface TiptapDocument {
-  type: string;
-  content?: Array<{
-    type: string;
-    content?: unknown[];
-    text?: string;
-    [key: string]: unknown;
-  }>;
-}
+import type { JSONContent } from "@tiptap/core";
 
 const schema = z.object({
   title: z.string().min(1, "標題為必填"),
   body: z.string().min(1, "內容為必填"),
-  bodyJson: z.custom<TiptapDocument>(),
+  bodyJson: z.custom<JSONContent>(),
   categoryId: z
     .number()
     .min(1, "請選擇分類")
@@ -54,7 +45,7 @@ type PostFormProps = {
     title: string;
     content: {
       body: string;
-      bodyJson: TiptapDocument;
+      bodyJson: JSONContent;
     };
     categoryId: number;
     coverImagePath: string | null;
@@ -62,7 +53,7 @@ type PostFormProps = {
   onSubmit?: (payload: {
     title: string;
     body: string;
-    bodyJson: TiptapDocument;
+    bodyJson: JSONContent;
     categoryId: number;
     coverImagePath: string | null;
     id?: number;
@@ -181,7 +172,7 @@ export default function PostForm({
   };
 
   return (
-    <div className="flex flex-col min-h-full py-10">
+    <div className="flex flex-col min-h-full py-10 w-full max-w-[1200px]">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           {/* 封面圖片 */}
@@ -209,7 +200,7 @@ export default function PostForm({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="z-50 w-9 rounded-lg shadow-xl bg-red-600/50 backdrop-blur-lg text-white shadow-xl hover:bg-red-600/70 hover:text-white"
+                    className="z-50 w-9 rounded-lg bg-red-600/50 backdrop-blur-lg text-white shadow-xl hover:bg-red-600/70 hover:text-white"
                     onClick={() => setCoverUrl(null)}
                   >
                     Ｘ
@@ -274,7 +265,7 @@ export default function PostForm({
                 <FormItem>
                   <SimpleEditor
                     htmlValue={field.value}
-                    jsonValue={form.getValues("bodyJson")}
+                    jsonValue={form.getValues("bodyJson") as JSONContent}
                     onChange={(d) => {
                       form.setValue("body", d.html || "");
                       form.setValue(

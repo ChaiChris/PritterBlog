@@ -31,7 +31,7 @@ export function RegisterForm() {
   const router = useRouter();
   useEffect(() => {
     if (user) {
-      router.push("/blog");
+      router.push("/");
     }
   }, [user, router]);
 

@@ -52,7 +52,7 @@ export default function UserPanelAdmin() {
           </div>
           {user.role === "ADMIN" && (
             <Button variant="ghost" className="text-zinc-600 cursor-pointer">
-              <Link href="/admin">Pritter Blog</Link>
+              <Link href="/">Pritter Blog</Link>
             </Button>
           )}
 

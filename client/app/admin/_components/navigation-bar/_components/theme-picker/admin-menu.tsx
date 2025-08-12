@@ -22,13 +22,13 @@ export default function AdminMenu() {
           文章新增
         </Button>
       </Link>
-      <Button
+      {/* <Button
         variant="ghost"
         value={"3"}
         className="theme-item p-[10px] text-md cursor-pointer text-zinc-500 transition-all duration-200"
       >
         主題管理
-      </Button>
+      </Button> */}
     </div>
   );
 }

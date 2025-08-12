@@ -9,8 +9,8 @@ import { stringToColor } from "@/render/avatar-colour-render";
 export default function PostCard({ post }: PostCardProps) {
   return (
     <>
-      <Link href={`/blog/${post.id}`} className="no-underline">
-        <Card className="relative group cursor-pointer w-[280px] h-[330px] mx-auto py-0 overflow-hidden shadow-lg text-white rounded-2xl">
+      <Link href={`/${post.id}`} className="no-underline">
+        <Card className="relative group cursor-pointer w-[280px] h-[330px] mx-auto py-0 overflow-hidden shadow text-white rounded-xl">
           {/* 卡片背景 */}
           <Image
             src={`${post.coverImagePath}`}
@@ -21,7 +21,7 @@ export default function PostCard({ post }: PostCardProps) {
           />
 
           {/* 濾鏡 */}
-          <div className="absolute rounded-2xl inset-0 z-10 bg-black/35 transition-all duration-700 ease-out group-hover:bg-black/50 group-hover:backdrop-blur-lg" />
+          <div className="absolute inset-0 z-10 bg-black/35 transition-all duration-700 ease-out group-hover:bg-black/50 group-hover:backdrop-blur-lg" />
 
           {/* 內容 */}
           <div className="relative z-20 py-5 gap-5">
@@ -48,7 +48,7 @@ export default function PostCard({ post }: PostCardProps) {
                   )}
                 </Avatar>
                 <div>
-                  <div className="text-white/90 text-shadow-xs">
+                  <div className="text-white/80 text-shadow-sm text-sm font-bold">
                     {post?.user?.username?.trim() || "匿名"}
                   </div>
                   <div className="text-xs text-shadow-xs text-zinc-100/80">
@@ -58,8 +58,8 @@ export default function PostCard({ post }: PostCardProps) {
               </div>
             </CardHeader>
 
-            <CardContent>
-              <div className="text-xl/8 text-zinc-50/90 font-bold text-shadow-sm py-2 line-clamp-3">
+            <CardContent className="flex flex-col gap-4">
+              <div className="text-2xl/7 text-zinc-50/90 font-bold text-shadow-sm line-clamp-3">
                 {post?.title || ""}
               </div>
               <div className="line-clamp-5 text-zinc-50/80 text-md text-shadow-sm tracking-wide">

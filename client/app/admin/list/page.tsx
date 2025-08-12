@@ -41,7 +41,7 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import PostPagination from "@/app/blog/_components/post-pagination/post-pagination";
+import PostPagination from "@/components/post-pagination/post-pagination";
 import Image from "next/image";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -145,7 +145,7 @@ export default function AdminPostList() {
                 />
               ) : (
                 <div className="w-full h-full bg-gray-100 text-center text-xs text-gray-400 flex items-center justify-center">
-                  無
+                  無封面
                 </div>
               )}
             </div>
@@ -173,7 +173,7 @@ export default function AdminPostList() {
         cell: (info) => {
           const user = info.row.original.user;
           const avatarUrl = user?.avatarPath
-            ? `https://github.com/${user.avatarPath}` // TODO:本地實作
+            ? `${user.avatarPath}` // TODO:本地實作
             : undefined;
 
           return (

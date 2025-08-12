@@ -18,7 +18,7 @@ interface UpdatePostData {
 
 export class PostAdminService {
   async createPost(data: CreatePostData) {
-    return await prisma.post.create({
+    return prisma.post.create({
       data: {
         title: data.title,
         body: data.body,
@@ -45,8 +45,8 @@ export class PostAdminService {
     });
   }
   async updatePost(id: number, data: UpdatePostData) {
-    return await prisma.post.update({
-      where: { id },
+    return prisma.post.update({
+      where: {id},
       data: {
         ...data,
         updatedAt: new Date(),
@@ -64,8 +64,8 @@ export class PostAdminService {
     });
   }
   async updateCoverImage(postId: number, coverImagePath: string) {
-    return await prisma.post.update({
-      where: { id: postId },
+    return prisma.post.update({
+      where: {id: postId},
       data: {
         coverImagePath,
         updatedAt: new Date(),
@@ -73,8 +73,8 @@ export class PostAdminService {
     });
   }
   async deletePost(id: number) {
-    return await prisma.post.delete({
-      where: { id },
+    return prisma.post.delete({
+      where: {id},
     });
   }
 }

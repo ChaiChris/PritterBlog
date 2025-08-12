@@ -144,3 +144,60 @@ export const getProfile = async (req: Request, res: Response) => {
     return res.status(400).json({ message: e.message });
   }
 };
+
+export const verifyAdminController = async (req: Request, res: Response) => {
+  const token = req.cookies?.token;
+  if (!token) {
+    logger.warn("[verifyAdminController] 未登入");
+    return res.status(401).json({
+      success: false,
+      message: "未登入",
+    });
+  }
+
+  try {
+    if (!req.user) {
+      logger.error("[verifyAdminController] 中介授權失敗");
+      return res.status(401).json({
+        success: false,
+        message: "中介授權失敗",
+      });
+    }
+
+    const { userId, role } = req.user;
+    if (!userId) {
+      logger.error(
+          "[verifyAdminController] 缺少 userId，需檢查 auth 中介層或使用者資料異常"
+      );
+      return res.status(401).json({
+        success: false,
+        message: "授權失敗" });
+    }
+
+    if (!role) {
+      logger.error(`[verifyAdminController] 使用者資料異常}`);
+      return res.status(401).json({
+        success: false,
+        message: "使用者資料異常",
+      });
+    }
+
+    if (role !== "ADMIN") {
+      logger.warn(`[verifyAdminController] 沒有權限`);
+      return res.status(403).json({
+        success: false,
+        message: "沒有權限",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "管理員權限驗證成功",
+      data: {
+        userId,
+      }
+    });
+  } catch (e: any) {
+    logger.error("checkUserEmailController", e);
+    return res.status(500).json({ success: false, message: e.message });
+  }
+};

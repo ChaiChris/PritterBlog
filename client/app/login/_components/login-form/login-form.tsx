@@ -31,7 +31,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (user) {
-      router.push("/blog");
+      router.push("/");
     }
   }, [user]);
 

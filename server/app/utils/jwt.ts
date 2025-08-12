@@ -9,6 +9,7 @@ type TokenPayload = {
   id: number;
   email?: string;
   name?: string;
+  role?: string;
 };
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET);
