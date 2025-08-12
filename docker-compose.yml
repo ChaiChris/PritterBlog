@@ -6,26 +6,23 @@ services:
       - "8081:8081"
       - "5555:5555"
     volumes:
-      - ./server:/server # 掛載整個專案，包含 uploads 資料夾
-      - /server/node_modules # 避免主機蓋掉 container 的 node_modules
+      - ./server/uploads:/server/uploads # 掛載 uploads
     env_file:
       - ./server/.env
     depends_on:
       - db
     restart: always
 
-  # client:
-  #   build:
-  #     context: ./client
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #     - ./client/.env
-  #   environment:
-  #     - NEXT_PUBLIC_API_URL=http://localhost:3000/api
-  #   depends_on:
-  #     - server
-  #   restart: always
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./client/.env
+    depends_on:
+      - server
+    restart: always
 
   db:
     image: postgres:15
@@ -34,7 +31,7 @@ services:
     environment:
       POSTGRES_DB: forumdb
       POSTGRES_USER: chris
-      POSTGRES_PASSWORD: 123456Qsxesz
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always

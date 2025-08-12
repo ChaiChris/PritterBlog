@@ -17,7 +17,7 @@ export default function CommentBlock({
   initialComments,
 }: CommentBlockProps) {
   const SERVER_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+    process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
   console.log("postId", postId);
   console.log("initialComments", initialComments);
   const {

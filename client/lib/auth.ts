@@ -1,12 +1,14 @@
 import { LoginInput, RegisterInput } from "@/types/auth";
 import axios from "axios";
 
-const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+const authBaseUrl =
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_SERVER_URL
+    : process.env.NEXT_PUBLIC_LOCAL_SERVER_URL;
 
 //axios 實例
 export const axiosUserInstance = axios.create({
-  baseURL: `${SERVER_URL}/api/auth`,
+  baseURL: `${authBaseUrl}/api/auth`,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -22,7 +24,7 @@ export const fetcher = async <T extends object = object>(
 
 export async function registerUser(input: RegisterInput) {
   // api/auth/register
-  console.log(`registerUser 觸發 使用：${SERVER_URL}`);
+  console.log(`registerUser 觸發 使用：${authBaseUrl}`);
   try {
     const { username, password, email } = input;
     if (!username || !password || !email) {
@@ -53,7 +55,7 @@ export async function registerUser(input: RegisterInput) {
 }
 
 export async function loginUser(input: LoginInput) {
-  console.log(`loginUser 觸發 使用：${SERVER_URL}`);
+  console.log(`loginUser 觸發 使用：${authBaseUrl}`);
   const { email, password } = input;
   if (!email || !password) {
     console.log('loginUser: ERROR 缺少登入值"');
@@ -82,7 +84,7 @@ export async function loginUser(input: LoginInput) {
 }
 
 export async function logoutUser() {
-  console.log(`logoutUser 觸發 使用：${SERVER_URL}`);
+  console.log(`logoutUser 觸發 使用：${authBaseUrl}`);
 
   try {
     const res = await axiosUserInstance.post("/logout");
@@ -92,27 +94,13 @@ export async function logoutUser() {
       return true;
     } else {
       console.error("logoutUser: 非 200 回應", res.status, res.data);
-      throw new Error("登出失敗，請稍後再試");
+      throw new Error("登出失敗");
     }
   } catch (error: unknown) {
     console.error("logoutUser: ERROR", error);
     if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "登出失敗，請檢查網路或稍後再試"
-      );
+      throw new Error(error.response?.data?.message || "登出失敗");
     }
     throw error;
   }
 }
-
-// export async function getUserInfo() {
-//   console.log(`getUserInfo 觸發 使用：${SERVER_URL}`);
-//   const res = await axiosUserInstance.get<User>("/profile");
-//   if (res.status === 200) {
-//     console.log("getUserInfo: 成功獲取使用者資訊", res.data);
-//     return res.data;
-//   } else {
-//     console.error("getUserInfo: ERROR 獲取使用者資訊失敗", res.data);
-//     throw new Error("獲取使用者資訊失敗，請稍後再試");
-//   }
-// }

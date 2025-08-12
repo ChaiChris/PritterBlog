@@ -70,7 +70,7 @@ export default function PostForm({
   categories,
 }: PostFormProps) {
   const SERVER_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+    process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),

@@ -7,13 +7,14 @@ import { format } from "date-fns";
 import { stringToColor } from "@/render/avatar-colour-render";
 
 export default function PostCard({ post }: PostCardProps) {
+  const relativePath = new URL(post.coverImagePath).pathname;
   return (
     <>
       <Link href={`/${post.id}`} className="no-underline">
         <Card className="relative group cursor-pointer w-[280px] h-[330px] mx-auto py-0 overflow-hidden shadow text-white rounded-xl">
           {/* 卡片背景 */}
           <Image
-            src={`${post.coverImagePath}`}
+            src={relativePath}
             alt="cover"
             width={280}
             height={330}

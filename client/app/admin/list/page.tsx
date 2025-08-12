@@ -133,11 +133,12 @@ export default function AdminPostList() {
         header: "封面",
         cell: ({ getValue }) => {
           const url = getValue();
+          const relativePath = new URL(url).pathname;
           return (
             <div className="w-16 h-10 overflow-hidden rounded-sm ">
               {url ? (
                 <Image
-                  src={url}
+                  src={relativePath}
                   alt={"封面"}
                   width={50}
                   height={50}

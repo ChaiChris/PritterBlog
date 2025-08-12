@@ -14,11 +14,12 @@ type UserSeed = {
 
 async function main() {
   const users: UserSeed[] = [];
+  const passwordTest = "123456";
   for (let i = 0; i < 100; i++) {
     users.push({
       email: faker.internet.email(),
-      password: await bcrypt.hash(faker.internet.password({ length: 12 }), 10),
-      avatarPath: faker.image.avatar(),
+      password: await bcrypt.hash(passwordTest, 10),
+      avatarPath: faker.image.avatarGitHub(),
       username: faker.internet.username(),
       role: Role.USER,
     });

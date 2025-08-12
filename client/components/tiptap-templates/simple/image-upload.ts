@@ -3,7 +3,7 @@ import axios from "axios";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+  process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
 
 //axios 實例
 export const axiosUploadsInstance = axios.create({

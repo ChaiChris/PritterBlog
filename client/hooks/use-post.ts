@@ -38,7 +38,7 @@ interface usePostsReturn {
 }
 
 const SERVER_URL =
-  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+  process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
 
 const fetcher = async (url: string): Promise<PostsResponse> => {
   const response = await fetch(url, { cache: "no-store" });
@@ -78,7 +78,7 @@ export const usePosts = (params: UsePostsParams = {}): usePostsReturn => {
   // skip 值計算
   const skip = (Number(currentPage) - 1) * Number(limit);
 
-  // 建構查詢參數
+  // 查詢參數
   const queryString = useMemo(() => {
     const queryParams: PostQuery = {
       limit: Number(limit),
@@ -105,9 +105,9 @@ export const usePosts = (params: UsePostsParams = {}): usePostsReturn => {
     {
       fallbackData: initialData,
       revalidateOnMount: currentPage === 1 && !initialData,
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 5000, // 5秒
+      dedupingInterval: 0, // 重新載入不使用快取
     }
   );
 

@@ -5,9 +5,14 @@ import PostViewer from "./_components/post-viewer/post-viewer";
 import Image from "next/image";
 import { Comment } from "@/types/comment";
 
+const imageBaseUrl =
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_SERVER_URL
+    : process.env.NEXT_PUBLIC_LOCAL_SERVER_URL;
+const SERVER_URL =
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+
 async function fetchPostCommentsData(postId: number) {
-  const SERVER_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
   const postUrl = `${SERVER_URL}/api/blog/post/${postId}`;
   const commentUrl = `${SERVER_URL}/api/blog/post/${postId}/comments?limit=10`;
   try {
@@ -56,13 +61,6 @@ async function fetchPostCommentsData(postId: number) {
     return null;
   }
 }
-
-// interface BlogPostInput {
-//   params: {
-//     postId: string | number;
-//   };
-// }
-
 export default async function BlogPost({
   params,
 }: {
@@ -79,11 +77,18 @@ export default async function BlogPost({
     return <div>資料載入失敗</div>;
   }
   const { post, initialComments } = data;
+
+  // for docker network env
+  const coverPicSrc = post?.coverImagePath
+    ? `${imageBaseUrl}${new URL(post.coverImagePath).pathname}`
+    : "";
+  console.log("[coverPicSrc]", coverPicSrc);
+
   return (
     <>
       <div className="bg-pic h-[500px] w-full relative">
         <Image
-          src={post?.coverImagePath}
+          src={coverPicSrc}
           alt="cover"
           fill
           className="object-cover object-center"
@@ -93,58 +98,6 @@ export default async function BlogPost({
       <main className="flex flex-col flex-1 justify-center items-center p-6 pt-[20px] pd-[80px]">
         <div className="w-full">
           <AuthorPanel user={post.user} postDate={post.updatedAt} />
-          {/* <article className="rounded-2xl p-4 prose prose-lg text-zinc-800 max-w-4xl mx-auto">
-            <div className="text-5xl font-bold py-5">
-              I&apos;ve been using this product for a while and it&apos;s been
-              consistently reliable. Definitely worth the investment.
-            </div>
-            <div className="post-container">
-              <p>
-                這段文字是用 Tailwind CSS
-                模擬紙張樣式的部落格內文。你可以自由套用不同的排版類型與標題格式。
-              </p>
-              <h3>段落標題</h3>
-              <p>
-                使用 Tailwind 的 `prose` 類別可讓 Markdown
-                風格文章自動擁有良好的排版設計。這對於部落格非常實用。
-              </p>
-              <ul>
-                <li>支援標題</li>
-                <li>清單</li>
-                <li>程式碼區塊</li>
-              </ul>
-              <h2>文章標題</h2>
-              <p>
-                這段文字是用 Tailwind CSS
-                模擬紙張樣式的部落格內文。你可以自由套用不同的排版類型與標題格式。
-              </p>
-              <h3>段落標題</h3>
-              <p>
-                使用 Tailwind 的 `prose` 類別可讓 Markdown
-                風格文章自動擁有良好的排版設計。這對於部落格非常實用。
-              </p>
-              <ul>
-                <li>支援標題</li>
-                <li>清單</li>
-                <li>程式碼區塊</li>
-              </ul>
-              <h2>文章標題</h2>
-              <p>
-                這段文字是用 Tailwind CSS
-                模擬紙張樣式的部落格內文。你可以自由套用不同的排版類型與標題格式。
-              </p>
-              <h3>段落標題</h3>
-              <p>
-                使用 Tailwind 的 `prose` 類別可讓 Markdown
-                風格文章自動擁有良好的排版設計。這對於部落格非常實用。
-              </p>
-              <ul>
-                <li>支援標題</li>
-                <li>清單</li>
-                <li>程式碼區塊</li>
-              </ul>
-            </div>
-          </article> */}
           {post ? (
             <PostViewer post={post} />
           ) : (

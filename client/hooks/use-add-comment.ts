@@ -2,7 +2,7 @@ import { mutate } from "swr";
 
 export default function useAddComment(postId: number) {
   const SERVER_URL =
-    process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+    process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
   const addComment = async (body: string) => {
     const res = await fetch(
       `${SERVER_URL}/api/blog/uploads/comment/${postId}`,

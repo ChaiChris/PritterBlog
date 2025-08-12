@@ -28,7 +28,7 @@ export default function DeleteHandler({
 
   async function handleConfirmDelete() {
     const SERVER_URL =
-      process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8081";
+      process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
     if (!targetId) return;
     setLoading(true);
     try {
