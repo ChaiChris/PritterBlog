@@ -33,9 +33,9 @@ export async function signToken(payload: JWTPayload): Promise<string> {
 }
 
 export async function verifyToken(token: string): Promise<TokenPayload> {
-  console.log("接收到的 token:", JSON.stringify(token));
-  console.log("Token 類型:", typeof token);
-  console.log("Token 長度:", token?.length);
+  // console.log("接收到的 token:", JSON.stringify(token));
+  // console.log("Token 類型:", typeof token);
+  // console.log("Token 長度:", token?.length);
   try {
     // 先檢查 token，再進行驗證
     if (!token || typeof token !== "string" || token.trim() === "") {

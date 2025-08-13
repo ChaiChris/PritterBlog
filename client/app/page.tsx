@@ -27,13 +27,13 @@ export default async function Blog({
   if (title) url.searchParams.append("title", title);
 
   try {
-    console.log("[Blog SSR] Fetching initial data from:", url);
+    // console.log("[Blog SSR] Fetching initial data from:", url);
     const res = await fetch(url, {
       next: { revalidate: 60 },
     });
     if (res.ok) {
       initialData = await res.json();
-      console.log("SSR initialData:", initialData);
+      // console.log("SSR initialData:", initialData);
       // console.log("Blog posts data:", initialData);
     }
   } catch (error) {
