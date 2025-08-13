@@ -5,6 +5,7 @@ if (!process.env.JWT_SECRET) {
   throw new Error("ENV 缺少 JWT_SECRET");
 }
 
+// 目前 Token 只使用 id/role
 type TokenPayload = {
   id: number;
   email?: string;
@@ -15,11 +16,6 @@ type TokenPayload = {
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function signToken(payload: JWTPayload): Promise<string> {
-  logger.info("SECRET_KEY: ", Array.from(SECRET_KEY));
-  if (!process.env.JWT_SECRET) {
-    logger.error("JWT_SECRET env 未設置");
-    throw new Error("JWT_SECRET env 未設置");
-  }
   try {
     return await new SignJWT(payload)
       .setProtectedHeader({ alg: "HS256" })
@@ -33,21 +29,13 @@ export async function signToken(payload: JWTPayload): Promise<string> {
 }
 
 export async function verifyToken(token: string): Promise<TokenPayload> {
-  // console.log("接收到的 token:", JSON.stringify(token));
-  // console.log("Token 類型:", typeof token);
-  // console.log("Token 長度:", token?.length);
   try {
     // 先檢查 token，再進行驗證
     if (!token || typeof token !== "string" || token.trim() === "") {
       throw new Error("Token 格式錯誤：必須是非空字串");
     }
-    const parts = token.split(".");
-    if (parts.length !== 3) {
-      throw new Error("Token 格式錯誤：不是有效的 JWT 格式");
-    }
-
     const { payload } = await jwtVerify(token, SECRET_KEY);
-    console.log("[JWT] payload: ", payload);
+    logger.info("[JWT] 驗證成功");
     return payload as TokenPayload;
   } catch (err) {
     console.error("驗證 token 失敗:", err);

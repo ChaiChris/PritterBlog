@@ -48,7 +48,7 @@ export default async function Blog({
         <div className="flex flex-col gap-6 container mx-auto justify-center items-center">
           {/*<NavigationBar themes={themes} />*/}
           <NavigationBar />
-          {/* 使用 SWRConfig 包裹 PostList 以提供初始資料 */}
+          {/* 使用 SWRConfig PostList 來提供初始資料 */}
           <SWRConfig
             value={{
               fallback: {

@@ -27,7 +27,7 @@ export const registerService = async (input: RegisterInput) => {
   }
 
   const hashedPassword = await bcrypt.hash(input.password, 10);
-  logger.info("registerService: 加密過後的密碼 ", hashedPassword);
+  // logger.info("registerService: 加密過後的密碼 ", hashedPassword);
   const newUser = await client.user.create({
     data: {
       email: input.email,
@@ -35,9 +35,14 @@ export const registerService = async (input: RegisterInput) => {
       username: input.username,
     },
   });
+  // console.log("[ register ] newUser: ", newUser);
+
   logger.info(`registerService: 成功註冊：${newUser.email}`);
-  const token = await jwtService.signToken({ id: newUser.id });
-  logger.info(`registerService: signToken success：${newUser.email}`);
+  const token = await jwtService.signToken({
+    id: newUser.id,
+    role: newUser.role,
+  });
+  // console.log("[ register ] token: ", token);
   return { token };
 };
 
@@ -45,7 +50,7 @@ export const checkUserNameService = async (input: CheckUserName) => {
   if (!input.username) {
     throw new Error("缺少 username");
   }
-  logger.info(`checkUserService: 觸發：${input.username}`);
+  // logger.info(`checkUserService: 觸發：${input.username}`);
   const user = await client.user.findUnique({
     where: { username: input.username },
   });
@@ -74,9 +79,8 @@ export const checkUserEmailService = async (input: CheckUserEmail) => {
 
 export const getProfileService = async (token: string) => {
   const payload = await jwtService.verifyToken(token);
-
-  if (!payload || typeof payload !== "object" || !("id" in payload) || !("role" in payload)) {
-    throw new Error("無效的 token");
+  if (!payload) {
+    throw new Error("Token異常");
   }
 
   const user = await client.user.findUnique({ where: { id: payload.id } });
@@ -87,4 +91,3 @@ export const getProfileService = async (token: string) => {
   const { password, ...userInfo } = user;
   return userInfo;
 };
-

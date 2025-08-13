@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { registerUser } from "@/lib/auth";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function RegisterForm() {
   const {
@@ -63,10 +64,12 @@ export function RegisterForm() {
 
       const doRigister = await registerUser(registerInput);
       if (doRigister) {
-        console.log("註冊成功");
+        // console.log("註冊成功");
+        toast("註冊成功!");
         await refreshUser();
       }
     } catch (error) {
+      toast("註冊失敗");
       setError("root", {
         type: "manual",
         message: error instanceof Error ? error.message : "註冊失敗",

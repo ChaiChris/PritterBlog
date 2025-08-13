@@ -107,13 +107,13 @@ export const usePosts = (params: UsePostsParams = {}): usePostsReturn => {
       revalidateOnMount: currentPage === 1 && !initialData,
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      dedupingInterval: 0, // 重新載入\不使用快取
+      dedupingInterval: 2, // 2秒快取
     }
   );
 
   // console.log("[usePosts] Fetched Data:", data);
 
-  // 處理頁面變更
+  // 處理頁面頁數切換
   const handlePostsPageChange = (page: number) => {
     setCurrentPage(page);
   };
