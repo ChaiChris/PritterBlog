@@ -3,8 +3,8 @@ import axios from "axios";
 
 const authBaseUrl =
   typeof window === "undefined"
-    ? process.env.NEXT_PUBLIC_SERVER_URL
-    : process.env.NEXT_PUBLIC_LOCAL_SERVER_URL;
+    ? process.env.NEXT_PUBLIC_SERVER_URL || "http://server:8081"
+    : process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
 
 //axios 實例
 export const axiosUserInstance = axios.create({
@@ -16,7 +16,7 @@ export const axiosUserInstance = axios.create({
 });
 
 export const fetcher = async <T extends object = object>(
-  url: string
+  url: string,
 ): Promise<T> => {
   const res = await axiosUserInstance.get<T>(url);
   return res.data;
@@ -47,7 +47,7 @@ export async function registerUser(input: RegisterInput) {
     console.error("registerUser error", error);
     if (axios.isAxiosError(error)) {
       throw new Error(
-        error.response?.data?.message || "註冊時發生錯誤，請稍後再試"
+        error.response?.data?.message || "註冊時發生錯誤，請稍後再試",
       );
     }
     throw error;
