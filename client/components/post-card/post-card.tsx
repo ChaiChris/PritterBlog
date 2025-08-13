@@ -15,9 +15,10 @@ export default function PostCard({ post }: PostCardProps) {
           {/* 卡片背景 */}
           <Image
             src={relativePath}
-            alt="cover"
+            alt="cover-img"
             width={280}
             height={330}
+            quality={35}
             className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-500 ease-out group-hover:scale-110"
           />
 
@@ -33,14 +34,14 @@ export default function PostCard({ post }: PostCardProps) {
                     <AvatarImage
                       className="shadow-sm"
                       src={post.user.avatarPath}
-                      alt="@shadcn"
+                      alt="User-Avatar"
                     />
                   ) : (
                     <AvatarFallback
                       className="text-zinc-600"
                       style={{
                         backgroundColor: stringToColor(
-                          post?.user?.username || ""
+                          post?.user?.username || "",
                         ),
                       }}
                     >
