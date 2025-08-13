@@ -23,11 +23,11 @@ export default function PostPagination({
   canGoPrevious,
   canGoNext,
 }: postPaginationProps) {
-  console.log("[PostPagination] currentPage:", currentPage);
-  console.log("[PostPagination] canGoPrevious:", canGoPrevious);
-  console.log("[PostPagination] canGoNext:", canGoNext);
+  // console.log("[PostPagination] currentPage:", currentPage);
+  // console.log("[PostPagination] canGoPrevious:", canGoPrevious);
+  // console.log("[PostPagination] canGoNext:", canGoNext);
   const pages = pageButtonGenerator();
-  console.log("[PostPagination] Generated pages:", pages);
+  // console.log("[PostPagination] Generated pages:", pages);
 
   return (
     <div className="flex justify-center items-center mt-6">

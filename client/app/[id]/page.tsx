@@ -68,7 +68,7 @@ export default async function BlogPost({
 }) {
   const { id } = await params;
   const postId = Number(id);
-  console.log("[Blog Page] Post ID:", postId);
+  // console.log("[Blog Page] Post ID:", postId);
   if (isNaN(postId) || postId <= 0) {
     return <div>無效的文章 ID</div>;
   }
@@ -82,7 +82,7 @@ export default async function BlogPost({
   const coverPicSrc = post?.coverImagePath
     ? `${imageBaseUrl}${new URL(post.coverImagePath).pathname}`
     : "";
-  console.log("[coverPicSrc]", coverPicSrc);
+  // console.log("[coverPicSrc]", coverPicSrc);
 
   return (
     <>

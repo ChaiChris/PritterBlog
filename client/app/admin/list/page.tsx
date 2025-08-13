@@ -209,7 +209,7 @@ export default function AdminPostList() {
               </div>
             );
           } catch (error) {
-            console.log("[ AdminPostList ]: ", error);
+            // console.log("[ AdminPostList ]: ", error);
             return (
               <div className="text-sm text-muted-foreground">無效日期</div>
             );

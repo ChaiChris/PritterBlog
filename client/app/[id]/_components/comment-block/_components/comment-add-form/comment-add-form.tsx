@@ -21,7 +21,7 @@ export default function CommentAddForm({ postId, onSuccess }: CommentAddForm) {
     if (!commentBody.trim()) return;
     try {
       setLoading(true);
-      console.log("Adding comment:", commentBody);
+      // console.log("Adding comment:", commentBody);
       await addComment(commentBody);
       setCommentBody("");
       onSuccess();

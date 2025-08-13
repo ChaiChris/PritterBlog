@@ -18,8 +18,8 @@ export default function CommentBlock({
 }: CommentBlockProps) {
   const SERVER_URL =
     process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
-  console.log("postId", postId);
-  console.log("initialComments", initialComments);
+  // console.log("postId", postId);
+  // console.log("initialComments", initialComments);
   const {
     comments,
     error,
@@ -45,7 +45,7 @@ export default function CommentBlock({
 
   if (isLoadingInitialData) return <p>載入中…</p>;
 
-  console.log(comments);
+  // console.log(comments);
   return (
     <div className="comment-block border-t border-neutral-200 p-6 max-w-4xl mx-auto pt-20">
       <h2 className="text-3xl w-full text-center font-bold mb-4">留言</h2>
@@ -53,7 +53,7 @@ export default function CommentBlock({
         <CommentAddForm
           postId={Number(postId)}
           onSuccess={async () => {
-            console.log("Comment added, updating comments...");
+            // console.log("Comment added, updating comments...");
             // await mutate(
             //   (key) =>
             //     typeof key === "string" &&

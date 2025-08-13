@@ -24,11 +24,11 @@ export const fetcher = async <T extends object = object>(
 
 export async function registerUser(input: RegisterInput) {
   // api/auth/register
-  console.log(`registerUser 觸發 使用：${authBaseUrl}`);
+  // console.log(`registerUser 觸發 使用：${authBaseUrl}`);
   try {
     const { username, password, email } = input;
     if (!username || !password || !email) {
-      console.log('registerUser: ERROR 缺少註冊值"');
+      // console.log('registerUser: ERROR 缺少註冊值"');
       throw new Error("registerUser: ERROR 缺少註冊值");
     }
     const res = await axiosUserInstance.post("/register", {
@@ -84,7 +84,7 @@ export async function loginUser(input: LoginInput) {
 }
 
 export async function logoutUser() {
-  console.log(`logoutUser 觸發 使用：${authBaseUrl}`);
+  // console.log(`logoutUser 觸發 使用：${authBaseUrl}`);
 
   try {
     const res = await axiosUserInstance.post("/logout");

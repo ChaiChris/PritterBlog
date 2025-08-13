@@ -18,12 +18,10 @@ const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 app.use(
   cors({
     origin: function (origin, callback) {
-      console.log("請求來自 origin:", origin);
-      logger.info("請求來自 origin:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        logger.warn(`CORS blocked: origin ${origin}`);
+        logger.warn(`CORS blocked!`);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -63,8 +61,8 @@ app.get("/error", (req, res) => {
 app.use("/api", routes);
 
 app.get("/debug-cookie", (req, res) => {
-  console.log("All cookies:", req.cookies);
-  console.log("Raw cookie header:", req.headers.cookie);
+  // console.log("All cookies:", req.cookies);
+  // console.log("cookie header:", req.headers.cookie);
   res.json({
     cookies: req.cookies,
     rawCookie: req.headers.cookie,

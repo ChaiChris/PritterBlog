@@ -1,11 +1,11 @@
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 const SERVER_URL =
   process.env.NEXT_PUBLIC_LOCAL_SERVER_URL || "http://localhost:8081";
 const fetcher = (url: string) =>
   fetch(url, { credentials: "include" }).then((res) => {
     if (res.status === 401) {
       console.info("未登入");
-      return null; // null 表示未授權
+      return null;
     }
     if (!res.ok) {
       throw new Error("Network response was not ok");

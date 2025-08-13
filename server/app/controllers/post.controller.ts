@@ -108,8 +108,8 @@ export const setNewPostContentController = async (
   try {
     logger.info("[setNewPostContentController] ==> 開始");
     const { title, body, bodyJson, categoryId, coverImagePath } = req.body;
-    console.log("bodyJson:", bodyJson);
-    console.log("body:", body);
+    // console.log("bodyJson:", bodyJson);
+    // console.log("body:", body);
 
     if (!title || !body || !bodyJson || !categoryId || !coverImagePath) {
       logger.error("[setNewPostContentController] 缺少欄位資料");
