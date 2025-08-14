@@ -46,6 +46,7 @@ export default function PostList({
           <PostCard key={post.id} post={post} />
         ))}
       </div>
+      {/* 頁籤部分 */}
       <PostPagination
         currentPage={currentPage}
         handlePostsPageChange={handlePostsPageChange}

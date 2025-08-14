@@ -9,7 +9,7 @@ export async function uploadCoverImageService(
 ) {
   try {
     const url = `/uploads/cover-image/${req.file?.filename}`;
-    logger.info("[uploadCoverImageService] 圖片已上傳:", url);
+    logger.debug("[uploadCoverImageService] 圖片已上傳:", url);
 
     if (!req.file) {
       return res.status(400).json({
@@ -34,7 +34,7 @@ export async function uploadContentImageService(
 ) {
   try {
     const url = `/uploads/content-image/${req.file?.filename}`;
-    logger.info("[uploadContentImageService] 圖片已上傳:", url);
+    logger.debug("[uploadContentImageService] 圖片已上傳:", url);
 
     if (!req.file) {
       return res.status(400).json({

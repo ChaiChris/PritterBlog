@@ -77,7 +77,7 @@ export default function PostForm({
     defaultValues: {
       title: initialData?.title ?? "",
       body: initialData?.content?.body ?? "",
-      bodyJson: initialData?.content?.bodyJson ?? { type: "doc", content: [] },
+      bodyJson: initialData?.content?.bodyJson ?? { type: "doc", content: [] }, // TipTap content 不可為 undefined
       categoryId: initialData?.categoryId ?? 0,
     },
   });
@@ -103,6 +103,7 @@ export default function PostForm({
   }, [initialData, form]);
 
   const handleCoverChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 上傳圖片
     const file = e.target.files?.[0];
     if (!file) return;
     setCoverLoading(true);
@@ -120,6 +121,7 @@ export default function PostForm({
           { withCredentials: true }
         );
         const returned = res.data?.data?.url;
+        //
         url = returned?.startsWith("http")
           ? returned
           : `${SERVER_URL}${returned}`;
@@ -265,14 +267,14 @@ export default function PostForm({
                 <FormItem>
                   <SimpleEditor
                     htmlValue={field.value}
-                    jsonValue={form.getValues("bodyJson") as JSONContent}
+                    jsonValue={form.getValues("bodyJson") as JSONContent} // TipTap JSON 型別定義
                     onChange={(d) => {
                       form.setValue("body", d.html || "");
                       form.setValue(
                         "bodyJson",
                         d.json && Object.keys(d.json).length > 0
                           ? d.json
-                          : { type: "doc", content: [] }
+                          : { type: "doc", content: [] } // 防止 undefined 導致 TipTap crash
                       );
                     }}
                   />

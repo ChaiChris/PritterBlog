@@ -9,7 +9,7 @@ import {
 import { logger } from "../logger.js";
 
 export const registerService = async (input: RegisterInput) => {
-  logger.info("=== registerService ===");
+  logger.debug("=== registerService ===");
   const existingEmail = await client.user.findUnique({
     where: { email: input.email },
   });
@@ -37,7 +37,7 @@ export const registerService = async (input: RegisterInput) => {
   });
   // console.log("[ register ] newUser: ", newUser);
 
-  logger.info(`registerService: 成功註冊：${newUser.email}`);
+  logger.debug(`registerService: 成功註冊：${newUser.email}`);
   const token = await jwtService.signToken({
     id: newUser.id,
     role: newUser.role,
@@ -46,36 +46,36 @@ export const registerService = async (input: RegisterInput) => {
   return { token };
 };
 
-export const checkUserNameService = async (input: CheckUserName) => {
-  if (!input.username) {
-    throw new Error("缺少 username");
-  }
-  // logger.info(`checkUserService: 觸發：${input.username}`);
-  const user = await client.user.findUnique({
-    where: { username: input.username },
-  });
-  if (user) {
-    logger.info(`checkUserService: 該用戶已存在：${input.username}`);
-    return { hasNameUsed: true };
-  }
-  logger.info(`checkUserService: 該用戶不存在：${input.username}`);
-  return { hasNameUsed: false };
-};
+// export const checkUserNameService = async (input: CheckUserName) => {
+//   if (!input.username) {
+//     throw new Error("缺少 username");
+//   }
+//   // logger.info(`checkUserService: 觸發：${input.username}`);
+//   const user = await client.user.findUnique({
+//     where: { username: input.username },
+//   });
+//   if (user) {
+//     logger.info(`checkUserService: 該用戶已存在：${input.username}`);
+//     return { hasNameUsed: true };
+//   }
+//   logger.info(`checkUserService: 該用戶不存在：${input.username}`);
+//   return { hasNameUsed: false };
+// };
 
-export const checkUserEmailService = async (input: CheckUserEmail) => {
-  if (!input.email) {
-    throw new Error("缺少 email");
-  }
-  const email = await client.user.findUnique({
-    where: { email: input.email },
-  });
-  if (email) {
-    logger.info(`checkUserEmailService: 該用戶已存在：${input.email}`);
-    return { hasEmailUsed: true };
-  }
-  logger.info(`checkUserEmailService: 該用戶不存在：${input.email}`);
-  return { hasEmailUsed: false };
-};
+// export const checkUserEmailService = async (input: CheckUserEmail) => {
+//   if (!input.email) {
+//     throw new Error("缺少 email");
+//   }
+//   const email = await client.user.findUnique({
+//     where: { email: input.email },
+//   });
+//   if (email) {
+//     logger.info(`checkUserEmailService: 該用戶已存在：${input.email}`);
+//     return { hasEmailUsed: true };
+//   }
+//   logger.info(`checkUserEmailService: 該用戶不存在：${input.email}`);
+//   return { hasEmailUsed: false };
+// };
 
 export const getProfileService = async (token: string) => {
   const payload = await jwtService.verifyToken(token);

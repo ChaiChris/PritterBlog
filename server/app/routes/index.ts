@@ -2,10 +2,11 @@ import { Router } from "express";
 import postRouter from "./post.router.js";
 import authRouter from "./auth.router.js";
 import categoryRouter from "./category.router.js";
+import { logger } from "../logger.js";
 
 const app = Router();
-app.use((req, res, next) => {
-  console.log(`[全域LOG] ${req.method} ${req.originalUrl}`);
+app.use((req, _, next) => {
+  logger.debug(`[ 全域LOG ] ${req.method} ${req.originalUrl}`);
   next();
 });
 

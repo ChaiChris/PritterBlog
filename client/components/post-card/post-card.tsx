@@ -18,11 +18,11 @@ export default function PostCard({ post }: PostCardProps) {
             alt="cover-img"
             width={280}
             height={330}
-            quality={35}
+            quality={50}
             className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-500 ease-out group-hover:scale-110"
           />
 
-          {/* 濾鏡 */}
+          {/* 模糊濾鏡 */}
           <div className="absolute inset-0 z-10 bg-black/35 transition-all duration-700 ease-out group-hover:bg-black/50 group-hover:backdrop-blur-lg" />
 
           {/* 內容 */}
@@ -41,7 +41,7 @@ export default function PostCard({ post }: PostCardProps) {
                       className="text-zinc-600"
                       style={{
                         backgroundColor: stringToColor(
-                          post?.user?.username || "",
+                          post?.user?.username || ""
                         ),
                       }}
                     >

@@ -84,10 +84,10 @@ export const getSinglePostController = async (req: Request, res: Response) => {
 
   try {
     const post = await postService.getSinglePost(params);
-    logger.info("getSinglePostController: GetSinglePost Successfully");
+    logger.debug("[ getSinglePostController ] GetSinglePost 成功");
     res.status(200).json(post);
   } catch (err: any) {
-    logger.error(`getSinglePostController: ERROR ${err.message}`);
+    logger.error(`[ getSinglePostController ] ERROR ${err.message}`);
     res.status(400).json({ error: "post fetch error" });
   }
 };
@@ -106,7 +106,7 @@ export const setNewPostContentController = async (
   res: Response
 ) => {
   try {
-    logger.info("[setNewPostContentController] ==> 開始");
+    logger.debug("[setNewPostContentController] ==> 開始");
     const { title, body, bodyJson, categoryId, coverImagePath } = req.body;
     // console.log("bodyJson:", bodyJson);
     // console.log("body:", body);
@@ -117,12 +117,22 @@ export const setNewPostContentController = async (
     }
 
     const userId = req.user?.userId;
+    const userRole = req.user?.role;
+
     if (!userId) {
       logger.error(
-        "[setNewPostContentController] 缺少 userId，需檢查 auth 中介層"
+        "[setNewPostContentController] userId 不存在，請檢查 auth middleware"
       );
-      return res.status(401).json({ message: "授權失敗" });
+      return res.status(401).json({ message: "未授權" });
     }
+
+    if (userRole !== "ADMIN") {
+      logger.error(
+        "[setNewPostContentController] userRole 非 ADMIN，用戶ID: " + userId
+      );
+      return res.status(403).json({ message: "無管理員權限" });
+    }
+
     const newPost = await postService.createPostService({
       title,
       body,
@@ -143,7 +153,7 @@ export const setEditPostContentController = async (
   res: Response
 ) => {
   try {
-    logger.info("[setEditPostContentController] ==> 開始");
+    logger.debug("[setEditPostContentController] ==> 開始");
     const { id } = req.params;
     const postId = Number(id);
     logger.debug("[setEditPostContentController] postId:", postId);
@@ -162,11 +172,20 @@ export const setEditPostContentController = async (
     }
 
     const userId = req.user?.userId;
+    const userRole = req.user?.role;
+
     if (!userId) {
       logger.error(
-        "[setEditPostContentController] 缺少 userId，需檢查 auth 中介層"
+        "[setNewPostContentController] userId 不存在，請檢查 auth middleware"
       );
-      return res.status(401).json({ message: "授權失敗" });
+      return res.status(401).json({ message: "未授權" });
+    }
+
+    if (userRole !== "ADMIN") {
+      logger.error(
+        "[setNewPostContentController] userRole 非 ADMIN，用戶ID: " + userId
+      );
+      return res.status(403).json({ message: "無管理員權限" });
     }
 
     const editedPost = await postService.editPostService(postId, {

@@ -270,11 +270,6 @@ export default function AdminPostList() {
     setDeleteDialogOpen(true);
   }
 
-  function handleDeleted() {
-    // 刪除完更新列表
-    refreshPosts();
-  }
-
   // 分頁
   const table = useReactTable({
     data: posts || [],
@@ -340,14 +335,14 @@ export default function AdminPostList() {
           className=""
         />
         <Select
-          value={String(pageSize)}
+          value={String(pageSize)} // Typescript: select 只接受 string
           onValueChange={(value) => handlePageSizeChange(Number(value))}
         >
-          <SelectTrigger className="">
+          <SelectTrigger className="border-0 shadow-none bg-transparent">
             <SelectValue placeholder="每頁筆數" />
           </SelectTrigger>
           <SelectContent>
-            {[10, 20, 50, 100].map((size) => (
+            {[10, 20, 50].map((size) => (
               <SelectItem key={size} value={String(size)}>
                 {size} 筆/頁
               </SelectItem>
@@ -398,6 +393,7 @@ export default function AdminPostList() {
         canGoPrevious={canGoPrevious}
         canGoNext={canGoNext}
       />
+      {/* 刪除確認 */}
       <DeleteHandler
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}

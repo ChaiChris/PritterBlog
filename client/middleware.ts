@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // server端需從 cookies 取出 Token
+    // 前端 SERVER 端需從 cookies 取出 Token
     const token = request.cookies.get("token")?.value;
 
     if (!token) {
@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // 呼叫後端驗證 token
+    // 呼叫後端 API 驗證 token
     const verifyResponse = await fetch(`${SERVER_URL}/api/auth/verify/admin`, {
       method: "GET",
       headers: {

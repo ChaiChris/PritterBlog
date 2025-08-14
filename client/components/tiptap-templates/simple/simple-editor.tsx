@@ -206,8 +206,8 @@ export function SimpleEditor({
   const editor = useEditor({
     content: jsonValue || htmlValue || "<p>請輸入內容...</p>",
     onUpdate: ({ editor }) => {
-      console.info("[Editor onUpdate] HTML:", editor.getHTML());
-      console.info("[Editor onUpdate] JSON:", editor.getJSON());
+      // console.info("[Editor onUpdate] HTML:", editor.getHTML());
+      // console.info("[Editor onUpdate] JSON:", editor.getJSON());
       if (typeof onChange === "function") {
         onChange({
           html: editor.getHTML(),
@@ -216,10 +216,10 @@ export function SimpleEditor({
       }
     },
     onCreate: ({ editor }) => {
-      console.info("[Editor onCreate] Editor instance created");
+      // console.info("[Editor onCreate] Editor instance created");
     },
     onDestroy: () => {
-      console.info("[Editor onDestroy] Editor instance destroyed");
+      // console.info("[Editor onDestroy] Editor instance destroyed");
     },
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,

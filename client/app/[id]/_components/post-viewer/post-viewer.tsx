@@ -1,6 +1,5 @@
 import { postHtmlRender } from "@/render/post-html-render";
 import { PostCardProps } from "@/types/post";
-import Image from "next/image";
 
 export default function PostViewer({ post }: PostCardProps) {
   return (
@@ -14,11 +13,3 @@ export default function PostViewer({ post }: PostCardProps) {
     </div>
   );
 }
-
-// const cleanHtml = sanitize(html, {
-//   allowedTags: sanitize.defaults.allowedTags.concat(["img"]),
-//   allowedAttributes: {
-//     ...sanitize.defaults.allowedAttributes,
-//     img: ["src", "alt", "width", "height"],
-//   },
-// });

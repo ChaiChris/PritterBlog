@@ -28,20 +28,23 @@ export const getCommentsService = async (
   if (cursor) {
     let decoded;
     try {
+      // 解碼指針
       decoded = decodeCursor(cursor);
     } catch (e) {
       return { comments: [] };
     }
+    // 指針日期
     const cursorCreatedAt = new Date(decoded.createdAt);
+    // 指針ID
     const cursorId = Number(decoded.id);
 
     where = {
       ...baseWhere,
       OR: [
-        { createdAt: { lt: cursorCreatedAt } }, // lt -> 小於
+        { createdAt: { lt: cursorCreatedAt } }, // 取創建時間比指針舊的
         {
           AND: [
-            { createdAt: { equals: cursorCreatedAt } },
+            { createdAt: { equals: cursorCreatedAt } }, // 而且如果留言創建時間相同，則取比 ID 較小的
             { id: { lt: cursorId } },
           ],
         },
@@ -52,7 +55,7 @@ export const getCommentsService = async (
   const rawComments = await prisma.comment.findMany({
     where,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: limit + 1,
+    take: limit + 1, // 多取一筆
     include: {
       user: { select: { id: true, username: true, avatarPath: true } },
     },
@@ -60,9 +63,10 @@ export const getCommentsService = async (
 
   let nextCursor: string | null = null;
 
+  // 每次多取一筆，如果留言長度大於限制（原本要取的）長度，則代表還有下一頁
   if (rawComments.length > limit) {
-    const nextItem = rawComments.pop()!;
-    nextCursor = encodeCursor(nextItem.createdAt, nextItem.id);
+    const nextItem = rawComments.pop()!; // 移除多的一筆並取出
+    nextCursor = encodeCursor(nextItem.createdAt, nextItem.id); // 設成指針並轉成易於傳輸的base64代碼
   }
 
   const comments: Comment[] = rawComments.map((c) => ({

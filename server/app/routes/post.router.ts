@@ -26,15 +26,18 @@ const app = Router();
 const coverImageUpload = createUploader("cover-image");
 const contentImageUpload = createUploader("content-image");
 
+//---- 文章處理
 app.get("/posts", getPostsController);
 app.get("/post/:id", getSinglePostController);
 app.post("/post", authMiddleware, setNewPostContentController);
 app.put("/post/:id", authMiddleware, setEditPostContentController);
 app.delete("/post/:id", authMiddleware, deletePostController);
 
+//---- 上傳
 app.post(
   "/uploads/post/cover",
   authMiddleware,
+  //圖片上傳中介層
   coverImageUpload.single("cover"),
   uploadCoverImageService
 );
@@ -50,6 +53,7 @@ app.post(
 
 // app.delete("/uploads/post/cover", authMiddleware, deleteCoverImageController);
 
+//---- 留言
 app.get("/post/:id/comments", optionAuthMiddleware, getCommentsController);
 
 app.post(

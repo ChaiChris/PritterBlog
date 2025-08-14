@@ -17,7 +17,7 @@ async function fetchPostCommentsData(postId: number) {
   const commentUrl = `${SERVER_URL}/api/blog/post/${postId}/comments?limit=10`;
   try {
     const [postRes, commentRes] = await Promise.all([
-      fetch(postUrl, { method: "GET", next: { revalidate: 60 } }),
+      fetch(postUrl, { method: "GET", next: { revalidate: 60 } }), // 60 秒快取
       fetch(commentUrl, { method: "GET", next: { revalidate: 60 } }),
     ]);
     if (!postRes.ok) throw new Error("文章獲取失敗");
@@ -26,6 +26,7 @@ async function fetchPostCommentsData(postId: number) {
     const postData = await postRes.json();
     const commentsData = await commentRes.json();
 
+    // 處理回傳的資料
     const post = {
       id: postData.id,
       title: postData.title,

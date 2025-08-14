@@ -1,3 +1,4 @@
+import { logger } from "../logger.js";
 import { client as prisma } from "../prisma/client.js";
 
 import {
@@ -106,7 +107,7 @@ export async function createPostService(input: CreatePostInput) {
 }
 
 export async function editPostService(id: number, input: CreatePostInput) {
-  console.log("[ EditPostService ]：觸發");
+  logger.debug("[ EditPostService ] 觸發");
   const { title, body, bodyJson, categoryId, userId, coverImagePath } = input;
 
   const editedPost = await prisma.post.update({

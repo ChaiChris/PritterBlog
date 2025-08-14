@@ -4,22 +4,23 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { logger } from "../logger.js";
 
-//用 fileURLToPath 取得當前 PATH，並支援跨平台
+//用 fileURLToPath 取得當前 PATH，並支援跨平台 （ESM適合）
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // 檢查目錄存在並自動創建
 const checkDir = (dir: string) => {
   if (!fs.existsSync(dir)) {
-    logger.info(`[ Multer Uploader ] 創建目錄: ${dir}`);
+    logger.info(`[ Multer Uploader ] 未找到圖片儲存目錄，自動創建目錄: ${dir}`);
     fs.mkdirSync(dir, { recursive: true });
   }
 };
 
 export const createUploader = (subDir: string) => {
+  //寫入到硬碟
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      // /server/uploads/
+      // /server/uploads/{subDir}
       const dir = path.join(__dirname, "..", "..", "uploads", subDir);
       try {
         checkDir(dir);
@@ -34,7 +35,7 @@ export const createUploader = (subDir: string) => {
     // 生成文件名
     filename: (req, file, cb) => {
       const timestamp = Date.now();
-      const randomNum = Math.round(Math.random() * 1e9);
+      const randomNum = Math.round(Math.random() * 1e9); // 1e9 = 1000000000
       const extension = path.extname(file.originalname);
       cb(null, `${timestamp}-${randomNum}${extension}`);
     },
@@ -49,7 +50,6 @@ export const createUploader = (subDir: string) => {
         "image/png",
         "image/gif",
         "image/webp",
-        "image/svg+xml",
         "image/avif",
       ]);
 
@@ -92,38 +92,6 @@ export const createUploader = (subDir: string) => {
             logger.info(
               `[ Multer Uploader ] 文件上傳成功: ${req.file.filename}`
             );
-          }
-          next();
-        });
-      };
-    },
-
-    array: (fieldName: string, maxCount?: number) => {
-      const middleware = uploader.array(fieldName, maxCount);
-      return (req: any, res: any, next: any) => {
-        middleware(req, res, (error) => {
-          if (error) {
-            logger.error(
-              `[ Multer Uploader ] 多文件上傳失敗: ${fieldName}`,
-              error
-            );
-            return next(error);
-          }
-          if (req.files?.length) {
-            logger.info(`[ Multer Uploader ]  多文件上傳成功`);
-          }
-          next();
-        });
-      };
-    },
-
-    fields: (fields: multer.Field[]) => {
-      const middleware = uploader.fields(fields);
-      return (req: any, res: any, next: any) => {
-        middleware(req, res, (error) => {
-          if (error) {
-            logger.error(`[ Multer Uploader ] 文件上傳失敗`, error);
-            return next(error);
           }
           next();
         });

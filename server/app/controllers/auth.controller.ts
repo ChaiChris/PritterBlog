@@ -4,13 +4,8 @@ import * as bcrypt from "bcrypt";
 import * as jwtService from "../utils/jwt.js";
 import { client } from "../prisma/client.js";
 import { z, ZodError } from "zod";
-import {
-  CheckUserEmail,
-  CheckUserName,
-  RegisterInput,
-} from "../types/auth.type.js";
+import { RegisterInput } from "../types/auth.type.js";
 import { logger } from "../logger.js";
-import { getProfileService } from "../services/auth.service.js";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -20,10 +15,9 @@ export const login = async (req: Request, res: Response) => {
     return res.status(401).json({ message: "找不到該使用者" });
   }
 
-  // 比對密碼
+  // 驗證密碼
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
-    //如果密碼錯誤，回傳 401
     logger.warn(`login: ${email} 登入驗證密碼失敗`);
     return res.status(401).json({ message: "登入驗證失敗" });
   }
@@ -33,11 +27,11 @@ export const login = async (req: Request, res: Response) => {
 
   //把 token 存在 cookie 裡
   res.cookie("token", token, {
-    // httpOnly 將無法被 JavaScript 讀取
+    // 無法被瀏覽器 JavaScript 讀取
     httpOnly: true,
-    // 可在 HTTP 傳輸
+    // 開放可在 HTTP 傳輸
     secure: false,
-    // 防止跨站
+    // 防止跨站存取
     sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: "/",
@@ -64,30 +58,21 @@ const UserRegisterSchema = z.object({
 });
 
 export const register = async (req: Request, res: Response) => {
-  logger.info("[ registerController ] 觸發:", req.body);
+  logger.debug("[ registerController ] 觸發:", req.body);
   try {
     const input: RegisterInput = UserRegisterSchema.parse(req.body);
     const result = await authService.registerService(input);
-
-    //額外驗證資料是否寫入
-    // const user = await client.user.findUnique({
-    //   where: { email: input.email },
-    // });
-
-    // if (!user) {
-    //   logger.info("registerController 資料寫入錯誤");
-    //   return res.status(401).json({ message: "資料寫入錯誤" });
-    // }
-    console.log("[ register ] result: ", result);
+    logger.debug("[ register ] result: ", result);
     const token = result.token;
-    logger.info("[ registerController ] 註冊成功");
+    logger.debug("[ registerController ] 註冊成功");
 
     //把 token 存在 cookie 裡
     res.cookie("token", token, {
-      // httpOnly 將無法被 JavaScript 讀取
+      // 無法被瀏覽器 JavaScript 讀取
       httpOnly: true,
+      // 開放可在 HTTP 傳輸
       secure: false,
-      // 防止跨站請求
+      // 防止跨站存取
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
@@ -130,12 +115,9 @@ export const register = async (req: Request, res: Response) => {
 // };
 
 export const getProfile = async (req: Request, res: Response) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(401).json({ message: "未登入" });
-  }
   try {
-    const result = await authService.getProfileService(token);
+    // 中介已經驗證，token 只需要取出即可
+    const result = await authService.getProfileService(res.locals.token);
     return res.status(200).json(result);
   } catch (e: any) {
     logger.error("[ checkUserEmailController ] ", e);
@@ -144,21 +126,12 @@ export const getProfile = async (req: Request, res: Response) => {
 };
 
 export const verifyAdminController = async (req: Request, res: Response) => {
-  const token = req.cookies?.token;
-  if (!token) {
-    logger.warn("[ verifyAdminController ] 未登入");
-    return res.status(401).json({
-      success: false,
-      message: "未登入",
-    });
-  }
-
   try {
     if (!req.user) {
       logger.error("[ verifyAdminController ] 中介授權失敗");
       return res.status(401).json({
         success: false,
-        message: "中介授權失敗",
+        message: "伺服器異常",
       });
     }
 
@@ -169,12 +142,12 @@ export const verifyAdminController = async (req: Request, res: Response) => {
       );
       return res.status(401).json({
         success: false,
-        message: "授權失敗",
+        message: "伺服器異常",
       });
     }
 
     if (!role) {
-      logger.error(`[ verifyAdminController ] 使用者資料異常}`);
+      logger.error(`ERROR! [ verifyAdminController ] 資料庫資料異常 ERROR!}`);
       return res.status(401).json({
         success: false,
         message: "使用者資料異常",

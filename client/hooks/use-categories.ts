@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { getCategoriesList } from "@/lib/category"; // 你原本的位置
+import { getCategoriesList } from "@/lib/category";
 
 interface Category {
   id: number;

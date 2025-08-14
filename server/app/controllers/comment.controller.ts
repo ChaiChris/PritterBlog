@@ -7,10 +7,7 @@ const postAdminService = new PostAdminService();
 export const getCommentsController = async (req: Request, res: Response) => {
   try {
     const postId = Number(req.params.id);
-    const user = req.user;
-    console.log("[ getCommentsController ] user: ", user);
     const userId = Number(req.user?.userId);
-    console.log("[ getCommentsController ] userId: ", userId);
     if (isNaN(postId) || postId <= 0) {
       return res.status(400).send("無效的文章 ID");
     }
@@ -23,12 +20,7 @@ export const getCommentsController = async (req: Request, res: Response) => {
     const cursor =
       typeof req.query.cursor === "string" ? req.query.cursor : undefined;
 
-    logger.info("[getCommentsController] ==> 開始獲取留言", {
-      postId,
-      limit,
-      cursor,
-      userId,
-    });
+    logger.debug("[getCommentsController] 獲取留言");
 
     const result = await commentService.getCommentsService(
       postId,
@@ -40,14 +32,10 @@ export const getCommentsController = async (req: Request, res: Response) => {
     res.status(200).json(result);
   } catch (err: any) {
     if (err.message === "指標錯誤") {
+      logger.error("[getCommentsController] 指標錯誤");
       return res.status(400).json({ error: "指標錯誤" });
     }
-    logger.error("[getCommentsController] 獲取失敗", {
-      message: err.message,
-      stack: err.stack,
-      route: req.originalUrl,
-      user: req.user?.id,
-    });
+    logger.error("[getCommentsController] 獲取失敗");
     res.status(500).json({ error: "伺服器錯誤" });
   }
 };
@@ -57,7 +45,6 @@ export const setNewCommentContentController = async (
   res: Response
 ) => {
   try {
-    logger.info("[setNewCommentContentController] ==> 開始");
     if (!req.body) {
       logger.warn("[setNewCommentContentController] 未填入資料");
       return res.status(401).json({ message: "未填入資料" });
@@ -87,7 +74,7 @@ export const setNewCommentContentController = async (
 
 export const deleteCommentController = async (req: Request, res: Response) => {
   try {
-    logger.info("[deleteCommentController] 觸發");
+    logger.debug("[deleteCommentController] 觸發");
     const commentId = Number(req.params.id);
     const userId = req.user?.id;
     const userRole = req.user?.role;
