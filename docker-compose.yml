@@ -1,21 +1,25 @@
+# 後端
 services:
   server:
     build:
       context: ./server
+    # 映射到本機 port (port 555 for prisma studio)
     ports:
       - "8081:8081"
       - "5555:5555"
     volumes:
-      - ./server/uploads:/server/uploads # 掛載 uploads
+      - ./server/uploads:/server/uploads # 掛載本機 uploads
     env_file:
       - ./server/.env
     depends_on:
       - db
     restart: always
 
+  # 前端
   client:
     build:
       context: ./client
+    # 映射到本機 port
     ports:
       - "3000:3000"
     env_file:
@@ -24,8 +28,10 @@ services:
       - server
     restart: always
 
+  # DataBase
   db:
     image: postgres:15
+    # 映射到本機 port
     ports:
       - "5432:5432"
     environment:
@@ -36,5 +42,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: always
 
+# 資料保留儲存
 volumes:
   pgdata:

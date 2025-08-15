@@ -7,7 +7,8 @@ RUN npm install
 
 COPY . .
 
-COPY ./uploads ./uploads
+# 範例文章圖片展示用
+# COPY ./uploads ./uploads
 
 RUN npx prisma generate
 

@@ -35,9 +35,9 @@ model Post {
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade) //onDelete: Cascade: 關聯的 User 被刪掉，該使用者底下的所有 Post/Comment 也會自動被刪掉
   userId         Int
   title          String        @db.VarChar(200)
-  coverImagePath String?       @db.VarChar(500) // 封面圖片
-  body           String
-  bodyJson       Json
+  coverImagePath String?       @db.VarChar(500)     // 封面圖片
+  body           String                             // HTML 渲染
+  bodyJson       Json                               // TipTap 編輯器讀取格式
   status         ArticleStatus @default(PUBLISHED)
   comments       Comment[]
   createdAt      DateTime      @default(now())

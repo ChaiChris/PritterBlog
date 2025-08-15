@@ -48,13 +48,13 @@ export const getPostsController = async (req: Request, res: Response) => {
         status: query.status,
       }),
     ]);
-    console.log("[getPostsController] total:", total);
+    // console.log("[getPostsController] total:", total);
     // 分頁
     const totalPages = Math.max(
-      1,
-      Math.ceil(Number(total) / Number(query.limit))
+      1, // 至少有一頁
+      Math.ceil(Number(total) / Number(query.limit)) // 無條件進位
     );
-    console.log("[getPostsController] totalPages:", totalPages);
+    // console.log("[getPostsController] totalPages:", totalPages);
 
     const currentPage = Math.floor(
       Number(query.skip) / Number(query.limit) + 1
